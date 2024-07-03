@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--Image we will display is our slider view-->
+    <ImageView
+        android:id="@+id/myimage"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/slider_image_1" />
+
+    <TextView
+        android:id="@+id/slider_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/myimage"
+        android:gravity="center"
+        android:fontFamily="@font/akaya_telivigala"
+        android:textSize="@dimen/title_text_size"
+        android:textStyle="bold"
+        android:text="@string/sliderTitle" />
+
+    <TextView
+        android:id="@+id/slider_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/slider_title"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/akaya_telivigala"
+        android:gravity="center"
+        android:layout_marginLeft="26dp"
+        android:layout_marginRight="26dp"
+        android:text="@string/sliderDescription"
+        android:textSize="@dimen/description_text_size" />
+
+</RelativeLayout>

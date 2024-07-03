@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".activity.GetStartedActivity">
+
+    <!--
+    slideranimation duration is to set duration for transition between two slides
+    sliderautocycledirection is to set animationbetween transition of your slides
+    sliderindicator enables is used to display the indicators for slider
+    slider indicator gravity is to set gravity for indicator gravity
+    slider indicator margin is to set margin for indicator
+    slider indicator orientation is used to add orientation for slider
+    slider indicator padding is use to add padding to indicator
+    slider indicator selected color is use to specify selected color
+    and slider indicator unselected color is use to specify the color when the slider is unselected
+    slider scroll time in sec is used to specify scrolling time in seconds
+    -->
+    <com.smarteist.autoimageslider.SliderView
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        app:sliderAnimationDuration="1000"
+        app:sliderAutoCycleDirection="back_and_forth"
+        app:sliderIndicatorAnimationDuration="600"
+        app:sliderIndicatorEnabled="true"
+        app:sliderIndicatorGravity="center_horizontal|bottom"
+        app:sliderIndicatorMargin="15dp"
+        app:sliderIndicatorOrientation="horizontal"
+        app:sliderIndicatorPadding="3dp"
+        app:sliderIndicatorRadius="2dp"
+        app:sliderIndicatorSelectedColor="@color/primary"
+        app:sliderIndicatorUnselectedColor="#5A5A5A"
+        app:sliderScrollTimeInSec="1" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/get_started_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="@dimen/m_20"
+        android:layout_marginRight="@dimen/m_20"
+        android:background="@drawable/primary_button"
+        android:fontFamily="@font/akaya_telivigala"
+        android:textSize="@dimen/button_text_size"
+        android:gravity="center"
+        android:text="@string/get_started"
+        android:textColor="@color/white" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="@dimen/m_20"
+        android:layout_marginRight="@dimen/m_20"
+        android:background="@drawable/outline_button"
+        android:fontFamily="@font/akaya_telivigala"
+        android:textSize="@dimen/button_text_size"
+        android:gravity="center"
+        android:text="@string/login"
+        android:textColor="@color/primary" />
+
+
+</LinearLayout>
