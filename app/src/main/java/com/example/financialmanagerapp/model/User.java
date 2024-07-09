@@ -1,6 +1,7 @@
 package com.example.financialmanagerapp.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class User implements Serializable {
     protected int id;
@@ -9,8 +10,7 @@ public class User implements Serializable {
     protected String _password;
     protected String _password_confirmation;
     protected Currency currency;
-
-
+    protected List<Wallet> wallets;
 
     public int getId() {
         return id;
@@ -36,7 +36,12 @@ public class User implements Serializable {
         return _password_confirmation;
     }
 
+    public List<Wallet> getWallets() {
+        return wallets;
+    }
+
     public User(Builder builder) {
+        this.id = builder.id;
         this._email = builder._email;
         this._name = builder._name;
         this._password = builder._password;
@@ -45,12 +50,17 @@ public class User implements Serializable {
     }
 
     public static class Builder{
+        private int id;
         private String _name;
         private String _email;
         private String _password;
         private String _password_confirmation;
         private Currency currency;
 
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
         public Builder name(String _name) {
             this._name = _name;
             return this;

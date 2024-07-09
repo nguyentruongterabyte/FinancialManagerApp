@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".activity.LoginActivity">
 
     <TextView
-
         android:id="@+id/tvLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,5 +21,87 @@
         android:textSize="@dimen/title_text_size"
         android:fontFamily="@font/akaya_telivigala"
         />
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvLogin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/m_20"
+        android:layout_marginEnd="@dimen/m_20"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_email"
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/email"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input_layout_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/input_layout_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="@dimen/m_20"
+        android:layout_marginEnd="@dimen/m_20"
+        android:layout_marginTop="@dimen/m_10"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_password"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/input_layout_2"
+        android:layout_marginTop="@dimen/m_20"
+        android:layout_marginStart="@dimen/m_20"
+        android:layout_marginEnd="@dimen/m_20"
+        android:background="@drawable/primary_button"
+        android:text="@string/login"
+        android:fontFamily="@font/akaya_telivigala"
+        android:textSize="@dimen/button_text_size"
+        android:textColor="@color/white"
+        android:enabled="false"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/btn_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingEnd="@dimen/m_20"
+        android:paddingStart="@dimen/m_20"
+        android:layout_marginTop="@dimen/m_20"
+        >
+
+    <TextView
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:text="@string/don_t_have_an_account"
+        android:fontFamily="@font/akaya_telivigala"
+        android:textSize="@dimen/description_text_size"
+        tools:ignore="RtlHardcoded" />
+    <TextView
+        android:id="@+id/btn_sign_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="@string/sign_up"
+        android:textColor="@color/primary"
+        android:textSize="@dimen/description_text_size"
+        android:fontFamily="@font/akaya_telivigala"
+        />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

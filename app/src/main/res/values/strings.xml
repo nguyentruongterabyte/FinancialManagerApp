@@ -44,5 +44,7 @@
     <string name="number_button">number button</string>
     <string name="finish_button">finish</string>
     <string name="tap_here_to_select_currency">Tap here to select currency</string>
+    <string name="sign_up">Sign up</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
 
 </resources>

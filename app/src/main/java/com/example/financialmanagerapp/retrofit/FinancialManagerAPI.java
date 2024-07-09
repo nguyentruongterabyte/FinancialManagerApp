@@ -1,11 +1,13 @@
 package com.example.financialmanagerapp.retrofit;
 
 import com.example.financialmanagerapp.model.Currency;
+import com.example.financialmanagerapp.model.User;
+import com.example.financialmanagerapp.model.Wallet;
+import com.example.financialmanagerapp.model.request.LoginRequest;
 import com.example.financialmanagerapp.model.request.RegisterRequest;
 import com.example.financialmanagerapp.model.response.AuthResponse;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.model.request.EmailCheckerRequest;
-import com.example.financialmanagerapp.model.request.PasswordCheckerRequest;
 import com.example.financialmanagerapp.model.request.RefreshTokenRequest;
 
 import java.util.List;
@@ -29,6 +31,12 @@ public interface FinancialManagerAPI {
     @POST("api/auth/register")
     Call<ResponseObject<AuthResponse>> register(@Body RegisterRequest request);
 
+    @POST("api/auth/login")
+    Call<ResponseObject<AuthResponse>> login(@Body LoginRequest request);
+
+    @POST("api/auth/{id}")
+    Call<ResponseObject<User>> get(@Path("id") int id);
+
     // Currency
     @GET("api/currency")
     Call<ResponseObject<List<Currency>>> getCurrencies();
@@ -38,4 +46,8 @@ public interface FinancialManagerAPI {
 
     @GET("api/currency/{id}")
     Call<ResponseObject<Currency>> getCurrency(@Path("id") int id);
+
+    // Wallet
+    @POST("api/wallet")
+    Call<ResponseObject<Wallet>> createWallet(@Body Wallet request);
 }

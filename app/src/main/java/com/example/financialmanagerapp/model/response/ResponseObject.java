@@ -3,9 +3,9 @@ package com.example.financialmanagerapp.model.response;
 public class ResponseObject<T> {
 
 
-    private int status;
-    private String message;
-    private T result;
+    protected int status;
+    protected String message;
+    protected T result;
 
     public ResponseObject(int status, String message) {
         this.status = status;
@@ -16,23 +16,11 @@ public class ResponseObject<T> {
         return status;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public T getResult() {
         return result;
     }
 
-    public void setResult(T result) {
-        this.result = result;
+    public String getMessage() {
+        return message;
     }
 }

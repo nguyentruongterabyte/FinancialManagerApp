@@ -3,6 +3,7 @@ package com.example.financialmanagerapp.activity;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.model.User;
+import com.example.financialmanagerapp.model.Wallet;
 import com.example.financialmanagerapp.model.request.RegisterRequest;
 import com.example.financialmanagerapp.model.response.AuthResponse;
 import com.example.financialmanagerapp.model.response.ResponseObject;
@@ -86,7 +88,6 @@ public class EnteringInitialAmountActivity extends BaseActivity {
 
         // handle finish button clicked
         btnFinish.setOnClickListener(v -> {
-            Log.d("myLog",String.valueOf(initialAmount));
             if (user != null) {
                 createAccountAndProceed();
             }
@@ -105,6 +106,12 @@ public class EnteringInitialAmountActivity extends BaseActivity {
         btnNumberEight.setOnClickListener(v -> onNumberButtonClick(btnNumberEight));
         btnNumberNine.setOnClickListener(v -> onNumberButtonClick(btnNumberNine));
 
+        // handle skip button clicked
+        btnSkip.setOnClickListener(v -> {
+            if (user != null) {
+                createAccountAndProceed();
+            }
+        });
 
         // Set up the OnBackPressedCallback
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -131,10 +138,24 @@ public class EnteringInitialAmountActivity extends BaseActivity {
             public void onResponse(@NonNull Call<ResponseObject<AuthResponse>> call, @NonNull Response<ResponseObject<AuthResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getStatus() == 201) {
+
+                        // clear storage
                         SharedPreferencesUtils.clearSharedPreferences(EnteringInitialAmountActivity.this);
+
+                        // save access, refresh tokens and user id
                         SharedPreferencesUtils.saveAccessToken(EnteringInitialAmountActivity.this, response.body().getResult().getToken());
                         SharedPreferencesUtils.saveRefreshToken(EnteringInitialAmountActivity.this, response.body().getResult().get_refresh_token());
                         SharedPreferencesUtils.saveUserId(EnteringInitialAmountActivity.this, response.body().getResult().getUser().getId());
+                        // re-builder user with user id
+                        user = new User.Builder()
+                                .id(response.body().getResult().getUser().getId())
+                                .name(user.get_name())
+                                .email(user.get_email())
+                                .password(user.get_password())
+                                .passwordConfirmation(user.get_password_confirmation())
+                                .currency(user.getCurrency())
+                                .build();
+                        // create wallet
                         createWalletAndProceed();
                     } else {
                         Toast.makeText(EnteringInitialAmountActivity.this, response.body().getResult().getErrors().get(0), Toast.LENGTH_SHORT).show();
@@ -150,13 +171,47 @@ public class EnteringInitialAmountActivity extends BaseActivity {
     }
 
     private void createWalletAndProceed() {
-        Intent mainActivity = new Intent(EnteringInitialAmountActivity.this, MainActivity.class);
-        mainActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(mainActivity);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        finish();
+
+        Wallet wallet = new Wallet.Builder()
+                .name("Cash")
+                .color(getColorHexFromResource(R.color.color_1))
+                .accountId(user.getId())
+                .walletTypeCode("GEN")
+                .exclude(1)
+                .initialAmount(initialAmount)
+                .build();
+
+        Call<ResponseObject<Wallet>> call = apiService.createWallet(wallet);
+        call.enqueue(new Callback<ResponseObject<Wallet>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Response<ResponseObject<Wallet>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getStatus() == 201) {
+                        Intent mainActivity = new Intent(EnteringInitialAmountActivity.this, MainActivity.class);
+                        mainActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(mainActivity);
+                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                        finish();
+                    } else {
+                        Toast.makeText(EnteringInitialAmountActivity.this, response.body().getResult().getErrors().get(0), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Throwable t) {
+                Log.e("API_ERROR", "API call failed: " + t.getMessage());
+            }
+        });
+
+
     }
 
+
+    private String getColorHexFromResource(int colorResId) {
+        int colorInt = ContextCompat.getColor(this, colorResId);
+        return String.format("#%06X", (0xFFFFFF & colorInt));
+    }
     private void onDotButtonClick() {
         String currentText = getTextFromTextView();
 
