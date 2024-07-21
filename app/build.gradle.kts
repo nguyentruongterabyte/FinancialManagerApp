@@ -62,4 +62,12 @@ dependencies {
 
     // lottie
     implementation("com.airbnb.android:lottie:6.4.0")
+
+    // Tab
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
+
+    // View model and Live data
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+
 }

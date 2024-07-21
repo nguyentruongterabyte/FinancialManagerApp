@@ -183,6 +183,8 @@ public class ChoosingCurrencyActivity extends BaseActivity {
                 String searchKey = edtSearch.getText().toString().trim();
                 if (!searchKey.isEmpty()) {
                     searchCurrency(searchKey, listView);
+                } else {
+                    initializeCurrencies();
                 }
             }
         });
@@ -241,19 +243,31 @@ public class ChoosingCurrencyActivity extends BaseActivity {
         Retrofit retrofit = RetrofitClient.getInstance(Utils.BASE_URL, this);
         apiService = retrofit.create(FinancialManagerAPI.class);
 
-        // Initialize currency list and currency list string
-        currencyList = new ArrayList<>();
-        currencyNames = new ArrayList<>();
-        for (Currency currency : Utils.currencies) {
-            currencyList.add(currency);
-            currencyNames.add(currency.get_ISO_code()
-                    + " - " + currency.get_currency()
-                    + "(" + currency.get_symbol() + ")");
+
+        // If currencies have not been loaded, load them
+        if (Utils.currencies.size() == 0) {
+            Call<ResponseObject<List<Currency>>> call = apiService.getCurrencies();
+            call.enqueue(new Callback<ResponseObject<List<Currency>>>() {
+                @Override
+                public void onResponse(@NonNull Call<ResponseObject<List<Currency>>> call, @NonNull Response<ResponseObject<List<Currency>>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        if (response.body().getStatus() == 200) {
+                            Utils.currencies = response.body().getResult();
+                            initializeCurrencies();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<ResponseObject<List<Currency>>> call, @NonNull Throwable t) {
+                    Log.e("API_ERROR", "API call failed: " + t.getMessage());
+                }
+            });
+        } else {
+            initializeCurrencies();
         }
-        adapter = new ArrayAdapter<>(
-                ChoosingCurrencyActivity.this,
-                android.R.layout.simple_list_item_1,
-                currencyNames);
+
+
 
         // get extra `user`
         Intent enteringEmailPasswordActivity = getIntent();
@@ -267,11 +281,27 @@ public class ChoosingCurrencyActivity extends BaseActivity {
         int currencyId = SharedPreferencesUtils.getInitialCurrencyId(this);
 
         if (currencyId != -1) {
-            getInitializeCurrency(currencyId);
+            getInitialCurrency(currencyId);
         }
     }
 
-    private void getInitializeCurrency(int currencyId) {
+    private void initializeCurrencies() {
+        // Initialize currency list and currency list string
+        currencyList = new ArrayList<>();
+        currencyNames = new ArrayList<>();
+        for (Currency currency : Utils.currencies) {
+            currencyList.add(currency);
+            currencyNames.add(currency.get_ISO_code()
+                    + " - " + currency.get_currency()
+                    + "(" + currency.get_symbol() + ")");
+        }
+        adapter = new ArrayAdapter<>(
+                ChoosingCurrencyActivity.this,
+                android.R.layout.simple_list_item_1,
+                currencyNames);
+    }
+
+    private void getInitialCurrency(int currencyId) {
         Call<ResponseObject<Currency>> call = apiService.getCurrency(currencyId);
         call.enqueue(new Callback<ResponseObject<Currency>>() {
             @Override

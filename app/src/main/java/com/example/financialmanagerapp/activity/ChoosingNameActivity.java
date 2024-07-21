@@ -51,6 +51,11 @@ public class ChoosingNameActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 24) {
+                    edtName.setText(s.subSequence(0, 24));
+                    edtName.setSelection(24); // Move the cursor to the end
+                }
+
                 // Enable/Disable the button based on text input
                 validateInputs();
             }

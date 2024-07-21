@@ -12,6 +12,8 @@ public class Wallet {
     protected String _name;
     @SerializedName("_initial_amount")
     protected double _initial_amount;
+    @SerializedName("_amount")
+    protected double _amount;
     @SerializedName("_color")
     protected String _color;
 
@@ -22,6 +24,9 @@ public class Wallet {
 
     @SerializedName("_wallet_type_code")
     protected String _wallet_type_code;
+
+    @SerializedName("_icon")
+    protected int _icon;
 
     protected WalletType wallet_type;
 
@@ -47,17 +52,12 @@ public class Wallet {
         return _exclude;
     }
 
-    public int get_account_id() {
-        return _account_id;
+    public int get_icon() {
+        return _icon;
     }
 
-    public WalletType getWallet_type() {
-        return wallet_type;
-    }
-
-
-    public String get_wallet_type_code() {
-        return _wallet_type_code;
+    public double get_amount() {
+        return _amount;
     }
 
     public List<String> getErrors() {
@@ -72,16 +72,20 @@ public class Wallet {
         this.wallet_type = builder.walletType;
         this._initial_amount = builder.initialAmount;
         this._wallet_type_code = builder.walletTypeCode;
+        this._icon = builder.icon;
+        this._amount = builder.amount;
     }
 
     public static class Builder {
         private String name;
         private double initialAmount;
         private String color;
+        private int icon;
         private int exclude;
         private int accountId;
         private String walletTypeCode;
         private WalletType walletType;
+        private double amount;
 
         public Builder name(String name) {
             this.name = name;
@@ -93,10 +97,21 @@ public class Wallet {
             return this;
         }
 
+        public Builder amount(double amount) {
+            this.amount = amount;
+            return this;
+        }
         public Builder color(String color) {
             this.color = color;
             return this;
         }
+
+        public Builder icon(int icon) {
+            this.icon = icon;
+            return this;
+        }
+
+
 
         public Builder exclude(int exclude) {
             this.exclude = exclude;

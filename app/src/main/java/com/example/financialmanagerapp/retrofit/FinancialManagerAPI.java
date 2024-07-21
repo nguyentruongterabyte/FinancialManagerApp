@@ -1,6 +1,8 @@
 package com.example.financialmanagerapp.retrofit;
 
+import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.Currency;
+import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.User;
 import com.example.financialmanagerapp.model.Wallet;
 import com.example.financialmanagerapp.model.request.LoginRequest;
@@ -34,9 +36,14 @@ public interface FinancialManagerAPI {
     @POST("api/auth/login")
     Call<ResponseObject<AuthResponse>> login(@Body LoginRequest request);
 
-    @POST("api/auth/{id}")
+    @GET("api/auth/{id}")
     Call<ResponseObject<User>> get(@Path("id") int id);
 
+    @POST("api/auth/password/reset-request")
+    Call<ResponseObject<Void>> requestResetPassword(@Body LoginRequest request);
+
+    @POST("api/auth/logout")
+    Call<ResponseObject<Void>> logout(@Body RefreshTokenRequest request);
     // Currency
     @GET("api/currency")
     Call<ResponseObject<List<Currency>>> getCurrencies();
@@ -50,4 +57,17 @@ public interface FinancialManagerAPI {
     // Wallet
     @POST("api/wallet")
     Call<ResponseObject<Wallet>> createWallet(@Body Wallet request);
+
+    // Category
+    @GET("api/category")
+    Call<ResponseObject<List<Category>>> getCategories();
+
+    // Transaction
+    @GET("api/transaction/{id}")
+    Call<ResponseObject<List<Transaction>>> getTransactionByUserId
+    (@Path("id") int userId, @Query("page") int page, @Query("amount") int amount);
+
+    @POST("api/transaction")
+    Call<ResponseObject<Transaction>> createTransaction(@Body Transaction request);
+
 }

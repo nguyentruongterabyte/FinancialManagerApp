@@ -41,15 +41,14 @@ public class GetStartedActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_started);
         setControl();
-//        navigate();
+        navigate();
         initData();
         setEvents();
-
 
     }
 
     private void navigate() {
-        if (SharedPreferencesUtils.getAccessToken(this) != null || SharedPreferencesUtils.getRefreshToken(this) != null) {
+        if (SharedPreferencesUtils.getAccessToken(this) != null && SharedPreferencesUtils.getRefreshToken(this) != null) {
             Intent mainActivity = new Intent(this, MainActivity.class);
             startActivity(mainActivity);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

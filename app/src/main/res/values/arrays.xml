@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="icon_array">
+        <!--    Categories icon    -->
+        <item>@drawable/ic_bills</item>
+        <item>@drawable/ic_clothing</item>
+        <item>@drawable/ic_education</item>
+        <item>@drawable/ic_entertainment</item>
+        <item>@drawable/ic_fitness</item>
+        <item>@drawable/ic_food</item>
+        <item>@drawable/ic_gifts</item>
+        <item>@drawable/ic_health</item>
+        <item>@drawable/ic_furniture</item>
+        <item>@drawable/ic_pet</item>
+        <item>@drawable/ic_shopping</item>
+        <item>@drawable/ic_transportation</item>
+        <item>@drawable/ic_travel</item>
+        <item>@drawable/ic_others</item>
+        <item>@drawable/ic_allowance</item>
+        <item>@drawable/ic_award</item>
+        <item>@drawable/ic_bonus</item>
+        <item>@drawable/ic_dividend</item>
+        <item>@drawable/ic_investment</item>
+        <item>@drawable/ic_salary</item>
+
+        <!--     Wallets icon    -->
+        <item>@drawable/ic_bitcoin_sign</item>
+        <item>@drawable/ic_cash_register</item>
+        <item>@drawable/ic_circle_dollar_to_slot</item>
+        <item>@drawable/ic_coins</item>
+        <item>@drawable/ic_comments_dollar</item>
+        <item>@drawable/ic_credit_card</item>
+        <item>@drawable/ic_hand_holding_dollar</item>
+        <item>@drawable/ic_landmark</item>
+        <item>@drawable/ic_money_bill</item>
+        <item>@drawable/ic_money_bill_trend_up</item>
+        <item>@drawable/ic_receipt</item>
+        <item>@drawable/ic_money_bill</item>
+        <item>@drawable/ic_money_bill</item>
+
+    </array>
+</resources>

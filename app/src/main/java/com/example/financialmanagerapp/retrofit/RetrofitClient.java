@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.model.request.RefreshTokenRequest;
 import com.example.financialmanagerapp.utils.SharedPreferencesUtils;
+import com.example.financialmanagerapp.utils.Utils;
 
 import java.io.IOException;
 
@@ -45,7 +46,7 @@ public class RetrofitClient {
                             synchronized (RetrofitClient.class) {
                                 try {
                                     RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(refreshToken);
-                                    ResponseObject<String> newTokenResponse = refreshToken(refreshTokenRequest);
+                                    ResponseObject<String> newTokenResponse = refreshToken(context, refreshTokenRequest);
                                     if (newTokenResponse != null && newTokenResponse.getStatus() == 200) {
                                         accessToken = newTokenResponse.getResult();
                                         SharedPreferencesUtils.saveAccessToken(context, accessToken);
@@ -63,11 +64,6 @@ public class RetrofitClient {
                             }
                         }
 
-                        if (response.code() == 403) {
-                            // return to Login Activity
-                            Intent logoutIntent = new Intent("com.example.financialmanagerapp.LOGOUT");
-                            context.sendBroadcast(logoutIntent);
-                        }
                         return response;
                     })
                     .addInterceptor(chain -> {
@@ -90,13 +86,29 @@ public class RetrofitClient {
         return instance;
     }
 
-    private static ResponseObject<String> refreshToken(RefreshTokenRequest request) throws IOException {
-        Call<ResponseObject<String>> call = financialManagerAPI.refreshToken(request);
+    private static ResponseObject<String> refreshToken(Context context, RefreshTokenRequest request) throws IOException {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Utils.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        FinancialManagerAPI apiService = retrofit.create(FinancialManagerAPI.class);
+
+        Call<ResponseObject<String>> call = apiService.refreshToken(request);
 
         retrofit2.Response<ResponseObject<String>> response = call.execute();
         if (response.isSuccessful() && response.body() != null) {
             return response.body();
         } else {
+            if (response.code() == 403) {
+                // Clear storage
+                SharedPreferencesUtils.clearSharedPreferences(context);
+
+                // return to Login Activity
+                Intent logoutIntent = new Intent("com.example.financialManagerApp.LOGOUT");
+                context.sendBroadcast(logoutIntent);
+            }
+
             throw new IOException("Failed to refresh token: " + response.message());
         }
     }

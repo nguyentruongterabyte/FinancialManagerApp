@@ -46,5 +46,50 @@
     <string name="tap_here_to_select_currency">Tap here to select currency</string>
     <string name="sign_up">Sign up</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="icon_description">Icon\n</string>
+    <string name="tab_icon">tab icon\n</string>
+    <string name="balance">Balance: </string>
+    <string name="_630_303">****</string>
+    <string name="tab">tab</string>
+    <string name="no_record">No record</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="find_your_account">Find your account</string>
+    <string name="enter_your_email_address">Enter your email address</string>
+    <string name="continue_">Continue</string>
+    <string name="truong_nguyen">Truong Nguyen</string>
+    <string name="account">Account</string>
+    <string name="_200_000">$ 200,000</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="income">Income</string>
+    <string name="save">SAVE</string>
+    <string name="transaction">transaction</string>
+    <string name="date">Date</string>
+    <string name="_07_18_2024">07/18/2024</string>
+    <string name="_9_54_am">9:54 AM</string>
+    <string name="amount_">Amount</string>
+    <string name="_0">$ 0</string>
+    <string name="description">Description</string>
+    <string name="short_description">Short description</string>
+    <string name="category">Category</string>
+    <string name="select_category">Select category</string>
+    <string name="wallet">Wallet</string>
+    <string name="cash_519_529">Cash•$519,529</string>
+    <string name="memo">Memo</string>
+    <string name="add_a_note">Add a note…</string>
+    <string name="enter_amount">Enter amount</string>
+    <string name="c">C</string>
+    <string name="divide">÷</string>
+    <string name="multiply">x</string>
+    <string name="add">+</string>
+    <string name="subtract">-</string>
+    <string name="equals">=</string>
+    <string name="_000">000</string>
+    <string name="bill">Bill</string>
+    <string name="select_wallet">Select wallet</string>
+    <string name="cash">Cash</string>
+    <string name="from_wallet">From wallet</string>
+    <string name="to_wallet">To wallet</string>
+    <string name="fee">Fee</string>
 
 </resources>

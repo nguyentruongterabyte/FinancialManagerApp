@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/action_bar_size"
+            android:orientation="horizontal"
+            android:background="@color/white">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:layout_marginStart="15dp"
+                android:src="@drawable/ic_bonus"
+                android:contentDescription="@string/balance" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="@dimen/action_bar_size"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingTop="10dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:text="@string/balance"
+                    android:textSize="@dimen/description_text_size"
+                    android:fontFamily="@font/akaya_telivigala" />
+
+                <TextView
+                    android:id="@+id/tv_balance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/roboto_mono"
+                    android:text="@string/_630_303"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical"
+                    tools:ignore="NestedWeights" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btn_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_eye"
+                android:paddingStart="@dimen/m_20"
+                android:paddingEnd="@dimen/m_20"
+                android:paddingTop="@dimen/m_10"
+                android:paddingBottom="@dimen/m_10"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/btn_hide_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_eye_slash"
+                android:paddingStart="@dimen/m_20"
+                android:paddingEnd="@dimen/m_20"
+                android:paddingTop="@dimen/m_10"
+                android:paddingBottom="@dimen/m_10"
+                tools:ignore="ContentDescription"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/no_record"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="250dp"
+                android:src="@drawable/ic_file_invoice"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_record"
+                android:textSize="40sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/akaya_telivigala" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_create_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_plus"
+        android:backgroundTint="@color/primary"
+        app:tint="@color/white"
+        tools:ignore="ContentDescription"
+        android:importantForAccessibility="no"
+        />
+
+
+</FrameLayout>

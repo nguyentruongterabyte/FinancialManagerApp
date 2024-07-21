@@ -17,6 +17,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activity.ForgotActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CreatingRecordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.TestActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.EnteringInitialAmountActivity"
             android:exported="false" />
         <activity

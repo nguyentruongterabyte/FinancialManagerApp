@@ -8,10 +8,12 @@ import androidx.core.content.ContextCompat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.model.User;
 import com.example.financialmanagerapp.model.Wallet;
@@ -53,6 +55,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
     protected User user;
     protected ImageButton btnFinish, btnDelete;
     protected TextView tvCurrencySymbol, tvInitialAmount, btnSkip;
+    protected LottieAnimationView lottieAnimationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +92,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
         // handle finish button clicked
         btnFinish.setOnClickListener(v -> {
             if (user != null) {
+                lottieAnimationView.setVisibility(View.VISIBLE);
                 createAccountAndProceed();
             }
         });
@@ -109,6 +113,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
         // handle skip button clicked
         btnSkip.setOnClickListener(v -> {
             if (user != null) {
+                lottieAnimationView.setVisibility(View.VISIBLE);
                 createAccountAndProceed();
             }
         });
@@ -136,6 +141,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
         call.enqueue(new Callback<ResponseObject<AuthResponse>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<AuthResponse>> call, @NonNull Response<ResponseObject<AuthResponse>> response) {
+                lottieAnimationView.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getStatus() == 201) {
 
@@ -155,6 +161,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
                                 .passwordConfirmation(user.get_password_confirmation())
                                 .currency(user.getCurrency())
                                 .build();
+                        lottieAnimationView.setVisibility(View.VISIBLE);
                         // create wallet
                         createWalletAndProceed();
                     } else {
@@ -165,6 +172,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<AuthResponse>> call, @NonNull Throwable t) {
+                lottieAnimationView.setVisibility(View.GONE);
                 Log.e("API_ERROR", "API call failed: " + t.getMessage());
             }
         });
@@ -177,7 +185,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
                 .color(getColorHexFromResource(R.color.color_1))
                 .accountId(user.getId())
                 .walletTypeCode("GEN")
-                .exclude(1)
+                .exclude(0)
                 .initialAmount(initialAmount)
                 .build();
 
@@ -185,6 +193,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
         call.enqueue(new Callback<ResponseObject<Wallet>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Response<ResponseObject<Wallet>> response) {
+                lottieAnimationView.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getStatus() == 201) {
                         Intent mainActivity = new Intent(EnteringInitialAmountActivity.this, MainActivity.class);
@@ -200,6 +209,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Throwable t) {
+                lottieAnimationView.setVisibility(View.GONE);
                 Log.e("API_ERROR", "API call failed: " + t.getMessage());
             }
         });
@@ -221,6 +231,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
         }
 
         tvInitialAmount.setText(currentText);
+
     }
 
     private void onNumberButtonClick(AppCompatButton numberButton) {
@@ -234,7 +245,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
                 && currentText.split("\\.")[1].length() >= 2
         ) return; // No more numbers added
 
-        // Only 9 decimals are allowed
+        // Only 12 decimals are allowed
         if (!currentText.contains(".")
                 &&
                 currentText
@@ -307,5 +318,6 @@ public class EnteringInitialAmountActivity extends BaseActivity {
         tvCurrencySymbol = findViewById(R.id.tv_currency_symbol);
         tvInitialAmount = findViewById(R.id.tv_initial_amount);
 
+        lottieAnimationView = findViewById(R.id.animationView);
     }
 }
