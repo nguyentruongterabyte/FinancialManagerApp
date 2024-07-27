@@ -6,6 +6,15 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 public class TimerFormatter {
+
+    protected final static String[] dayOfWeekText = {
+            "Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+    };
+
+    protected final static String[] monthOfYearText = {
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    };
+
     @SuppressLint("DefaultLocale")
     public static String convertDateString(int year, int month, int day) {
         if (month < 1) month = 1;
@@ -48,6 +57,13 @@ public class TimerFormatter {
 
         // can use to get year, get day, get day of week, etc
         return calendar;
+    }
 
+    public static String getDayOfWeekText(int dayOfWeek) {
+        return dayOfWeekText[dayOfWeek - 1];
+    }
+
+    public static String getMonthOfYearText(int monthOfYear) {
+        return monthOfYearText[monthOfYear];
     }
 }

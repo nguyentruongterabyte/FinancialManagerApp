@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.financialmanagerapp.R;
+import com.example.financialmanagerapp.model.SharedViewModel;
 import com.example.financialmanagerapp.utils.Calculator;
 import com.example.financialmanagerapp.utils.MoneyFormatter;
 import com.example.financialmanagerapp.utils.Utils;

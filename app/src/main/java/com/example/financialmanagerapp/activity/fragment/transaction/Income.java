@@ -21,8 +21,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.financialmanagerapp.R;
+import com.example.financialmanagerapp.model.SharedViewModel;
 import com.example.financialmanagerapp.model.Wallet;
 import com.example.financialmanagerapp.utils.MoneyFormatter;
+import com.example.financialmanagerapp.utils.TimerFormatter;
 import com.example.financialmanagerapp.utils.Utils;
 
 
@@ -36,6 +38,11 @@ public class Income extends Fragment {
     protected int year, month, day;
     protected int hour, minute;
     protected double amount;
+    protected String action;
+
+    public Income(String action) {
+        this.action = action;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,7 +105,7 @@ public class Income extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 runnable = () -> sharedViewModel.setDescription(s.toString());
-                handler.postDelayed(runnable, 300);
+                handler.postDelayed(runnable, 400);
             }
         });
         // handle edit text memo changed
@@ -121,18 +128,32 @@ public class Income extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 runnable = () -> sharedViewModel.setMemo(s.toString());
-                handler.postDelayed(runnable, 300);
+                handler.postDelayed(runnable, 400);
             }
         });
 
-        // Observe live data
-        sharedViewModel.getSelectedDate().observe(getViewLifecycleOwner(), s -> tvDate.setText(s));
-        sharedViewModel.getSelectedTime().observe(getViewLifecycleOwner(), s -> tvTime.setText(s));
-        sharedViewModel.getDay().observe(getViewLifecycleOwner(), d -> day = d);
-        sharedViewModel.getMonth().observe(getViewLifecycleOwner(), m -> month = m);
-        sharedViewModel.getYear().observe(getViewLifecycleOwner(), y -> year = y);
-        sharedViewModel.getHour().observe(getViewLifecycleOwner(), h -> hour = h);
-        sharedViewModel.getMinute().observe(getViewLifecycleOwner(), m -> minute = m);
+        sharedViewModel.getDay().observe(getViewLifecycleOwner(), d -> {
+            day = d;
+            tvDate.setText(TimerFormatter.convertDateString(year, month, d));
+        });
+        sharedViewModel.getMonth().observe(getViewLifecycleOwner(), m -> {
+            month = m + 1;
+            tvDate.setText(TimerFormatter.convertDateString(year, m + 1, day));
+        });
+        sharedViewModel.getYear().observe(getViewLifecycleOwner(), y -> {
+            year = y;
+            tvDate.setText(TimerFormatter.convertDateString(y, month, day));
+        });
+        sharedViewModel.getHour().observe(getViewLifecycleOwner(), h -> {
+            hour = h;
+            tvTime.setText(TimerFormatter.convertTimeString(h, minute));
+        });
+        sharedViewModel.getMinute().observe(getViewLifecycleOwner(), m -> {
+            minute = m;
+            tvTime.setText(TimerFormatter.convertTimeString(hour, m));
+        });
+
+
         sharedViewModel.getWallet().observe(getViewLifecycleOwner(), this::setTvWallet);
         sharedViewModel.getCategory().observe(getViewLifecycleOwner(), category -> {
             tvCategory.setText(category.get_name());
@@ -162,8 +183,8 @@ public class Income extends Fragment {
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 requireContext(),
                 (timePicker, selectedHour, selectedMinute) -> {
-                    sharedViewModel.setSelectedTime(selectedHour, selectedMinute);
                     sharedViewModel.setTime(selectedHour, selectedMinute);
+                    tvTime.setText(TimerFormatter.convertTimeString(selectedHour, selectedMinute));
                 },
                 hour, minute, true
         );
@@ -175,9 +196,9 @@ public class Income extends Fragment {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 requireContext(),
                 (datePicker, selectedYear, selectedMonth, selectedDay) -> {
-                    sharedViewModel.setSelectedDate(selectedYear, selectedMonth, selectedDay);
                     sharedViewModel.setDate(selectedYear, selectedMonth, selectedDay);
-                }, year, month, day
+                    tvDate.setText(TimerFormatter.convertDateString(selectedYear, selectedMonth + 1, selectedDay));
+                }, year, month - 1, day
         );
 
         datePickerDialog.show();
@@ -190,10 +211,13 @@ public class Income extends Fragment {
         amount = 0;
 
         // set the first wallet of user to text view
-        if (Utils.currentUser.getWallets().size() != 0) {
+        if (Utils.currentUser.getWallets().size() != 0 && action.equals(Utils.CREATING_TRANSACTION)) {
             setTvWallet(Utils.currentUser.getWallets().get(0));
             sharedViewModel.setWallet(Utils.currentUser.getWallets().get(0));
         }
+
+        // set text view amount with amount 0
+        tvAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), 0.0));
     }
 
     private void setTvWallet(Wallet wallet) {

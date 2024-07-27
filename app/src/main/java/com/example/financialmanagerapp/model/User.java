@@ -1,5 +1,7 @@
 package com.example.financialmanagerapp.model;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -11,6 +13,13 @@ public class User implements Serializable {
     protected String _password_confirmation;
     protected Currency currency;
     protected List<Wallet> wallets;
+
+    public User() {
+    }
+
+    public void setWallets(List<Wallet> wallets) {
+        this.wallets = wallets;
+    }
 
     public int getId() {
         return id;
@@ -91,4 +100,16 @@ public class User implements Serializable {
         }
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", _name='" + _name + '\'' +
+                ", _email='" + _email + '\'' +
+                ", _password='" + _password + '\'' +
+                ", _password_confirmation='" + _password_confirmation + '\'' +
+                ", currency=" + currency +
+                '}';
+    }
 }

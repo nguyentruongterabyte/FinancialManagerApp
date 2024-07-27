@@ -9,7 +9,7 @@ public class MoneyFormatter {
         try {
             if (amount >= 0)
                 return String.format("%s %s", symbol, dft.format(amount));
-            return String.format("-%s %s", symbol, dft.format(amount));
+            return String.format("-%s %s", symbol, dft.format(Math.abs(amount)));
         } catch (NumberFormatException e) {
             return symbol + " " + amount;
         }

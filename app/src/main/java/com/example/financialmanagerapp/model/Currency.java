@@ -1,5 +1,7 @@
 package com.example.financialmanagerapp.model;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
 public class Currency implements Serializable {
@@ -23,4 +25,14 @@ public class Currency implements Serializable {
         return _currency;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "Currency{" +
+                "id=" + id +
+                ", _ISO_code='" + _ISO_code + '\'' +
+                ", _symbol='" + _symbol + '\'' +
+                ", _currency='" + _currency + '\'' +
+                '}';
+    }
 }

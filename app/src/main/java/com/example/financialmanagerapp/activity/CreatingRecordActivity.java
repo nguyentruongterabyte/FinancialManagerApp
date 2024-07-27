@@ -2,6 +2,7 @@ package com.example.financialmanagerapp.activity;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -17,10 +19,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.financialmanagerapp.R;
-import com.example.financialmanagerapp.activity.fragment.transaction.SharedViewModel;
 import com.example.financialmanagerapp.adapter.TransactionViewPagerAdapter;
 import com.example.financialmanagerapp.model.Category;
+import com.example.financialmanagerapp.model.SharedViewModel;
 import com.example.financialmanagerapp.model.Transaction;
+import com.example.financialmanagerapp.model.Wallet;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
 import com.example.financialmanagerapp.retrofit.RetrofitClient;
@@ -46,10 +49,9 @@ public class CreatingRecordActivity extends BaseActivity {
     protected TransactionViewPagerAdapter transactionViewPagerAdapter;
     private SharedViewModel sharedViewModel;
     protected Transaction transaction = new Transaction();
-    protected Calendar calendar = Calendar.getInstance();
+    protected Calendar calendar;
     protected FinancialManagerAPI apiService;
-    protected int transactionTypeId = Utils.TRANSFER_TRANSACTION_ID;
-    protected int tabId = Utils.INCOME_TAB_ID;
+
     protected int year = 2024;
     protected int month = 7;
     protected int day = 18;
@@ -78,7 +80,7 @@ public class CreatingRecordActivity extends BaseActivity {
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
         // set adapter tab
-        transactionViewPagerAdapter = new TransactionViewPagerAdapter(this);
+        transactionViewPagerAdapter = new TransactionViewPagerAdapter(this, Utils.CREATING_TRANSACTION);
         viewPager.setAdapter(transactionViewPagerAdapter);
 
         // set tabs name
@@ -117,17 +119,15 @@ public class CreatingRecordActivity extends BaseActivity {
         apiService = retrofit.create(FinancialManagerAPI.class);
 
         // Get the current date
-        Calendar calendar = Calendar.getInstance();
+        calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH) + 1;
+        month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
 
         // Get the current time
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         minute = calendar.get(Calendar.MINUTE);
 
-        sharedViewModel.setSelectedDate(year, month, day);
-        sharedViewModel.setSelectedTime(hour, minute);
         sharedViewModel.setDate(year, month, day);
         sharedViewModel.setTime(hour, minute);
 
@@ -169,8 +169,8 @@ public class CreatingRecordActivity extends BaseActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                sharedViewModel.setTabId(tab.getId());
                 setActiveTab(tab);
+                validateInputs();
             }
 
             @Override
@@ -217,10 +217,6 @@ public class CreatingRecordActivity extends BaseActivity {
             transaction.set_amount(amount);
             validateInputs();
         });
-        sharedViewModel.getTabId().observe(this, _tabId -> {
-            tabId = _tabId;
-            validateInputs();
-        });
 
         // Set up the OnBackPressedCallback
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -234,37 +230,211 @@ public class CreatingRecordActivity extends BaseActivity {
     }
 
     private void handleSaveRecord() {
-        // set transaction type id
-        transaction.set_transaction_type_id(transactionTypeId);
 
         // set date
         long millis = calendar.getTimeInMillis();
         Timestamp timestamp = new Timestamp(millis);
         transaction.set_date(timestamp);
 
-        Log.d("myLog", transaction.toString());
+
+        switch (transaction.get_transaction_type_id()) {
+            case Utils.EXPENSE_TRANSACTION_ID:
+                handleSaveExpenseTransaction();
+                break;
+            case Utils.INCOME_TRANSACTION_ID:
+                handleSaveIncomeTransaction();
+                break;
+            case Utils.TRANSFER_TRANSACTION_ID:
+                handleSaveTransferTransaction();
+                break;
+        }
+    }
+
+    private void handleSaveTransferTransaction() {
+        Call<ResponseObject<Transaction>> call = apiService.createTransaction(transaction);
+        call.enqueue(new Callback<ResponseObject<Transaction>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Response<ResponseObject<Transaction>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getStatus() == 201) {
+
+                        // add transaction to transactions utils
+                        transaction = response.body().getResult();
+                        Utils.transactions.add(transaction);
+
+                        // add fee transaction to transactions utils
+                        // Check if the transaction has a fee greater than 0
+                        if (transaction.get_fee() > 0) {
+                            // Create the fee transaction
+                            Category category = new Category.Builder()
+                                    .id(Utils.OTHER_CATEGORY_EXPENSE_TRANSACTION_ID)
+                                    .name("Others")
+                                    .icon(13)
+                                    .color("#603C34")
+                                    .transactionTypeId(Utils.EXPENSE_TRANSACTION_ID)
+                                    .build();
+
+                            Transaction feeTransaction = new Transaction.Builder()
+                                    .id(transaction.getId())
+                                    .category(category)
+                                    .categoryId(category.getId())
+                                    .date(transaction.get_date())
+                                    .wallet(transaction.getWallet())
+                                    .walletId(transaction.get_wallet_id())
+                                    .toWallet(transaction.getTo_wallet())
+                                    .toWalletId(transaction.get_to_wallet_id())
+                                    .description("Fee")
+                                    .amount(transaction.get_fee())
+                                    .transactionTypeId(Utils.EXPENSE_TRANSACTION_ID)
+                                    .updatedAt(transaction.getUpdated_at())
+                                    .isFeeTransaction(true)
+                                    .parent(transaction)
+                                    .build();
+
+                            // Add the fee transaction to the list
+                            Utils.transactions.add(feeTransaction);
+                        }
+
+                        // Update to wallet amount, then update from wallet amount
+                        Wallet updateToWallet = Wallet.findById(transaction.get_to_wallet_id(), Utils.currentUser.getWallets());
+                        double amount = updateToWallet.get_amount();
+                        amount += transaction.get_amount();
+                        updateToWallet.set_amount(amount);
+                        updateWallet(updateToWallet, false);
+
+
+                        // Update from wallet amount
+                        Wallet updateFromWallet = Wallet.findById(transaction.get_from_wallet_id(), Utils.currentUser.getWallets());
+                        amount = updateFromWallet.get_amount();
+                        amount -= (transaction.get_amount() + transaction.get_fee());
+                        updateFromWallet.set_amount(amount);
+                        updateWallet(updateFromWallet, true);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Throwable t) {
+                Log.e("API_ERROR", "API call failed: " + t.getMessage());
+            }
+        });
+    }
+
+
+    private void handleSaveIncomeTransaction() {
+        Call<ResponseObject<Transaction>> call = apiService.createTransaction(transaction);
+        call.enqueue(new Callback<ResponseObject<Transaction>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Response<ResponseObject<Transaction>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getStatus() == 201) {
+                        // add transaction to transaction utils
+                        transaction = response.body().getResult();
+                        Utils.transactions.add(transaction);
+
+                        // Update wallet amount
+                        Wallet updateWallet = Wallet.findById(transaction.get_wallet_id(), Utils.currentUser.getWallets());
+                        double amount = updateWallet.get_amount();
+                        amount = amount + transaction.get_amount();
+                        updateWallet.set_amount(amount);
+                        updateWallet(updateWallet, true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Throwable t) {
+                Log.e("API_ERROR", "API call failed: " + t.getMessage());
+            }
+        });
+    }
+
+    private void handleSaveExpenseTransaction() {
+        Call<ResponseObject<Transaction>> call = apiService.createTransaction(transaction);
+        call.enqueue(new Callback<ResponseObject<Transaction>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Response<ResponseObject<Transaction>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getStatus() == 201) {
+                        // add transaction to transaction utils
+                        transaction = response.body().getResult();
+                        Utils.transactions.add(transaction);
+
+                        // update wallet amount
+                        Wallet updateWallet = Wallet.findById(transaction.get_wallet_id(), Utils.currentUser.getWallets());
+                        double amount = updateWallet.get_amount();
+                        amount = amount - transaction.get_amount();
+                        updateWallet.set_amount(amount);
+                        updateWallet(updateWallet, true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Throwable t) {
+                Log.e("API_ERROR", "API call failed: " + t.getMessage());
+            }
+        });
+    }
+
+    private void updateWallet(@NonNull Wallet wallet, boolean finish) {
+
+        Call<ResponseObject<Wallet>> call = apiService.updateWallet(wallet, Utils.currentUser.getId(), wallet.getId());
+        call.enqueue(new Callback<ResponseObject<Wallet>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Response<ResponseObject<Wallet>> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getStatus() == 200) {
+
+                        // update wallet in wallets utils
+                        Wallet updatedWallet = response.body().getResult();
+                        boolean isUpdated = Wallet.updateWalletInList(updatedWallet, Utils.currentUser.getWallets());
+                        if (!isUpdated) {
+                            Toast.makeText(CreatingRecordActivity.this, "An error occur", Toast.LENGTH_SHORT).show();
+                        }
+                        if (finish) {
+
+
+
+                            Intent mainActivity = new Intent(CreatingRecordActivity.this, MainActivity.class);
+                            startActivity(mainActivity);
+                            overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
+                            finish();
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Throwable t) {
+
+            }
+        });
     }
 
     private void validateInputs() {
 
-        switch (tabId) {
-            case Utils.INCOME_TAB_ID:
+        switch (transaction.get_transaction_type_id()) {
+            case Utils.INCOME_TRANSACTION_ID:
                 setEnableSaveButton(
                         transaction != null
                                 && transaction.get_amount() != null
                                 && transaction.get_amount() != 0.0
-                                && transactionTypeId == Utils.INCOME_TRANSACTION_ID
+                                && sharedViewModel.getCategory().getValue() != null
                 );
                 break;
-            case Utils.EXPENSE_TAB_ID:
+            case Utils.EXPENSE_TRANSACTION_ID:
                 setEnableSaveButton(
                         transaction != null
                                 && transaction.get_amount() != null
                                 && transaction.get_amount() != 0.0
-                                && transactionTypeId == Utils.EXPENSE_TRANSACTION_ID
+                                && sharedViewModel.getExpenseCategory().getValue() != null
                 );
                 break;
-            case Utils.TRANSFER_TAB_ID:
+            case Utils.TRANSFER_TRANSACTION_ID:
                 setEnableSaveButton(
                         transaction != null
                                 && transaction.get_amount() != null
@@ -312,19 +482,19 @@ public class CreatingRecordActivity extends BaseActivity {
             tabText.setTextColor(ContextCompat.getColor(this, R.color.white));
             switch (transactionType) {
                 case "Income":
-                    transactionTypeId = Utils.INCOME_TRANSACTION_ID;
                     tvTitle.setText("Income");
                     customView.setBackgroundColor(ContextCompat.getColor(this, R.color.primary));
+                    transaction.set_transaction_type_id(Utils.INCOME_TRANSACTION_ID);
                     break;
                 case "Expense":
-                    transactionTypeId = Utils.EXPENSE_TRANSACTION_ID;
                     tvTitle.setText("Expense");
                     customView.setBackgroundColor(ContextCompat.getColor(this, R.color.color_6));
+                    transaction.set_transaction_type_id(Utils.EXPENSE_TRANSACTION_ID);
                     break;
                 case "Transfer":
                     tvTitle.setText("Transfer");
-                    transactionTypeId = Utils.TRANSFER_TRANSACTION_ID;
                     customView.setBackgroundColor(ContextCompat.getColor(this, R.color.color_2));
+                    transaction.set_transaction_type_id(Utils.TRANSFER_TRANSACTION_ID);
                     break;
             }
         }

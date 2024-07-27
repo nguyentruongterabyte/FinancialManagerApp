@@ -18,6 +18,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -58,6 +59,12 @@ public interface FinancialManagerAPI {
     @POST("api/wallet")
     Call<ResponseObject<Wallet>> createWallet(@Body Wallet request);
 
+    @PUT("api/wallet/update/{id}/{walletId}")
+    Call<ResponseObject<Wallet>> updateWallet(
+            @Body Wallet request,
+            @Path("id") int userId,
+            @Path("walletId") int walletId);
+
     // Category
     @GET("api/category")
     Call<ResponseObject<List<Category>>> getCategories();
@@ -70,4 +77,9 @@ public interface FinancialManagerAPI {
     @POST("api/transaction")
     Call<ResponseObject<Transaction>> createTransaction(@Body Transaction request);
 
+    @PUT("api/transaction/update/{id}/{transactionId}")
+    Call<ResponseObject<Transaction>> updateTransaction(
+            @Body Transaction request,
+            @Path("id") int userId,
+            @Path("transactionId") int transactionId);
 }

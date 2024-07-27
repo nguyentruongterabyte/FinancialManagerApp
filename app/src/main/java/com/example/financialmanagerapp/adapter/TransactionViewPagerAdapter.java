@@ -12,20 +12,24 @@ import com.example.financialmanagerapp.activity.fragment.transaction.Transfer;
 public class TransactionViewPagerAdapter extends FragmentStateAdapter
 {
 
-    public TransactionViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+    protected String action;
+
+    public TransactionViewPagerAdapter(@NonNull FragmentActivity fragmentActivity, String action) {
         super(fragmentActivity);
+        this.action = action;
     }
+
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
         switch (position) {
             case 1:
-                return new Expense();
+                return new Expense(action);
             case 2:
-                return new Transfer();
+                return new Transfer(action);
             default:
-                return new Income();
+                return new Income(action);
         }
     }
 

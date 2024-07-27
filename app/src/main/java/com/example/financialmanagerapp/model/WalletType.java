@@ -1,6 +1,10 @@
 package com.example.financialmanagerapp.model;
 
-public class WalletType {
+import androidx.annotation.NonNull;
+
+import java.io.Serializable;
+
+public class WalletType implements Serializable {
     protected String _code;
     private String _name;
 
@@ -18,5 +22,14 @@ public class WalletType {
 
     public void set_name(String _name) {
         this._name = _name;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return "WalletType{" +
+                "_code='" + _code + '\'' +
+                ", _name='" + _name + '\'' +
+                '}';
     }
 }

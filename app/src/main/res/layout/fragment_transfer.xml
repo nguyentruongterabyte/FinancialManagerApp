@@ -141,6 +141,7 @@
                 android:layout_gravity="center"
                 android:text="@string/select_wallet"
                 android:textColor="@color/gray"
+                android:fontFamily="@font/roboto_mono"
                 android:textSize="@dimen/description_text_size"
                 />
             <ImageView

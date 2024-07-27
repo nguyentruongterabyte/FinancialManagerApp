@@ -22,7 +22,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     private static Retrofit instance;
-    protected static FinancialManagerAPI financialManagerAPI;
 
     public static Retrofit getInstance(String baseUrl, Context context) {
 

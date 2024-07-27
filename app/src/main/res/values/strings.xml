@@ -91,5 +91,16 @@
     <string name="from_wallet">From wallet</string>
     <string name="to_wallet">To wallet</string>
     <string name="fee">Fee</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="_20">20</string>
+    <string name="saturday">Saturday</string>
+    <string name="jul_2024">Jul 2024</string>
+    <string name="record">Record</string>
+    <string name="food_for_cat">Food for cat</string>
+    <string name="one_month_ago_i_bought_a_cat_food_bottle">One month ago I bought a cat food bottle</string>
+    <string name="expense">Expense</string>
+    <string name="type">Type</string>
+    <string name="_07_23_2024_10_25">07/23/2024 10:25</string>
+    <string name="food">Food</string>
 
 </resources>

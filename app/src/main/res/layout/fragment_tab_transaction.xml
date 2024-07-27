@@ -83,6 +83,7 @@
         </LinearLayout>
 
         <LinearLayout
+
             android:id="@+id/no_record"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -105,6 +106,13 @@
                 android:textColor="@color/black"
                 android:fontFamily="@font/akaya_telivigala" />
         </LinearLayout>
+        <ListView
+            android:visibility="gone"
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

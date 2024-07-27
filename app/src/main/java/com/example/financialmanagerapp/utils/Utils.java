@@ -1,8 +1,14 @@
 package com.example.financialmanagerapp.utils;
 
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.Currency;
+import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.User;
 
 import java.util.ArrayList;
@@ -11,10 +17,12 @@ import java.util.List;
 
 public class Utils {
     // Base URL
-    public static final String BASE_URL = "http://192.168.1.8:6789/";
+    public static final String BASE_URL = "http://192.168.1.9:6789/";
 
     // Currencies
     public static List<Currency> currencies = new ArrayList<>();
+    public static List<Transaction> transactions = new ArrayList<>();
+    public static boolean feesHandled = false;
 
     // Current user
     public static User currentUser = null;
@@ -44,7 +52,7 @@ public class Utils {
     public static final int INCOME_TRANSACTION_ID = 1;
     public static final int EXPENSE_TRANSACTION_ID = 2;
     public static final int TRANSFER_TRANSACTION_ID = 3;
-
+    public static final int OTHER_CATEGORY_EXPENSE_TRANSACTION_ID = 23;
     // Tab Id
     public static final int INCOME_TAB_ID = 1;
     public static final int EXPENSE_TAB_ID = 2;
@@ -57,4 +65,24 @@ public class Utils {
     // Amount type
     public static final String ENTERING_AMOUNT = "entering_amount";
     public static final String ENTERING_FEE = "entering_fee";
+
+    public static final String CREATING_TRANSACTION = "creating_transaction";
+    public static final String UPDATING_TRANSACTION = "updating_transaction";
+
+    public static void setListViewHeightBasedOnItems(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) return;
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
 }

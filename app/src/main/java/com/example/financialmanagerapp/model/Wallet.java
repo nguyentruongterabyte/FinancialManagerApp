@@ -2,9 +2,10 @@ package com.example.financialmanagerapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Wallet {
+public class Wallet implements Serializable {
 
     protected int id;
 
@@ -31,6 +32,37 @@ public class Wallet {
     protected WalletType wallet_type;
 
     protected List<String> errors;
+
+    public Wallet() {
+    }
+
+    public static Wallet findById(int id, List<Wallet> wallets) {
+        for (Wallet w : wallets) {
+            if (w.getId() == id) {
+                return w;
+            }
+        }
+        return new Wallet();
+    }
+
+    public static boolean updateWalletInList(Wallet wallet, List<Wallet> wallets) {
+        boolean isUpdated = false;
+
+        for (int i = 0; i < wallets.size(); i++) {
+            Wallet currentWallet = wallets.get(i);
+            if (currentWallet.getId() == wallet.getId()) {
+                wallets.set(i, wallet);
+                isUpdated = true;
+                break;
+            }
+        }
+
+        return isUpdated;
+    }
+
+    public void set_amount(double _amount) {
+        this._amount = _amount;
+    }
 
     public int getId() {
         return id;
@@ -87,6 +119,7 @@ public class Wallet {
         private WalletType walletType;
         private double amount;
 
+
         public Builder name(String name) {
             this.name = name;
             return this;
@@ -101,6 +134,7 @@ public class Wallet {
             this.amount = amount;
             return this;
         }
+
         public Builder color(String color) {
             this.color = color;
             return this;
@@ -110,7 +144,6 @@ public class Wallet {
             this.icon = icon;
             return this;
         }
-
 
 
         public Builder exclude(int exclude) {
@@ -132,9 +165,11 @@ public class Wallet {
             this.walletTypeCode = walletTypeCode;
             return this;
         }
+
         public Wallet build() {
             return new Wallet(this);
         }
 
     }
+
 }

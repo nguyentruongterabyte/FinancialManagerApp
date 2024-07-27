@@ -1,16 +1,10 @@
-package com.example.financialmanagerapp.activity.fragment.transaction;
+package com.example.financialmanagerapp.model;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.financialmanagerapp.model.Category;
-import com.example.financialmanagerapp.model.Wallet;
-import com.example.financialmanagerapp.utils.TimerFormatter;
-
 public class SharedViewModel extends ViewModel {
-    private final MutableLiveData<String> selectedDate = new MutableLiveData<>();
-    private final MutableLiveData<String> selectedTime = new MutableLiveData<>();
     private final MutableLiveData<Integer> year = new MutableLiveData<>();
     private final MutableLiveData<Integer> month = new MutableLiveData<>();
     private final MutableLiveData<Integer> day = new MutableLiveData<>();
@@ -22,9 +16,7 @@ public class SharedViewModel extends ViewModel {
     private final MutableLiveData<Double> fee = new MutableLiveData<>();
     private final MutableLiveData<Category> category = new MutableLiveData<>();// income
     private final MutableLiveData<Category> expenseCategory = new MutableLiveData<>(); // expense
-
-    private final MutableLiveData<Wallet> wallet = new MutableLiveData<>();
-    private final MutableLiveData<Integer> tabId = new MutableLiveData<>();
+    private final MutableLiveData<Wallet> wallet = new MutableLiveData<>(new Wallet());
     private final MutableLiveData<Wallet> fromWallet = new MutableLiveData<>();
 
     public LiveData<Integer> getYear() {
@@ -58,23 +50,6 @@ public class SharedViewModel extends ViewModel {
         return minute;
     }
 
-    public void setSelectedDate(int year, int month, int day) {
-        String date = TimerFormatter.convertDateString(year, month, day);
-        selectedDate.setValue(date);
-    }
-
-    public LiveData<String> getSelectedDate() {
-        return selectedDate;
-    }
-
-    public void setSelectedTime(int hour, int minute) {
-        String time = TimerFormatter.convertTimeString(hour, minute);
-        selectedTime.setValue(time);
-    }
-
-    public LiveData<String> getSelectedTime() {
-        return selectedTime;
-    }
 
     public void setAmount(double _amount) {
         amount.setValue(_amount);
@@ -138,14 +113,6 @@ public class SharedViewModel extends ViewModel {
 
     public LiveData<Wallet> getFromWallet() {
         return fromWallet;
-    }
-
-    public void setTabId(int id) {
-        tabId.setValue(id);
-    }
-
-    public LiveData<Integer> getTabId() {
-        return tabId;
     }
 
 }
