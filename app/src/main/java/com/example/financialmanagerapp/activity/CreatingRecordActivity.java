@@ -18,12 +18,15 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.adapter.TransactionViewPagerAdapter;
 import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.SharedViewModel;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.Wallet;
+import com.example.financialmanagerapp.model.mapper.TransactionMapper;
+import com.example.financialmanagerapp.model.mapper.WalletMapper;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
 import com.example.financialmanagerapp.retrofit.RetrofitClient;
@@ -42,6 +45,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class CreatingRecordActivity extends BaseActivity {
+    private LottieAnimationView lottieAnimationView;
     private ImageButton btnBack;
     private TextView tvTitle, btnSave;
     private TabLayout tabLayout;
@@ -83,6 +87,7 @@ public class CreatingRecordActivity extends BaseActivity {
         transactionViewPagerAdapter = new TransactionViewPagerAdapter(this, Utils.CREATING_TRANSACTION);
         viewPager.setAdapter(transactionViewPagerAdapter);
 
+        lottieAnimationView = findViewById(R.id.animationView);
         // set tabs name
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             // inflate custom view for tab
@@ -237,6 +242,7 @@ public class CreatingRecordActivity extends BaseActivity {
         transaction.set_date(timestamp);
 
 
+        lottieAnimationView.setVisibility(View.VISIBLE);
         switch (transaction.get_transaction_type_id()) {
             case Utils.EXPENSE_TRANSACTION_ID:
                 handleSaveExpenseTransaction();
@@ -251,10 +257,12 @@ public class CreatingRecordActivity extends BaseActivity {
     }
 
     private void handleSaveTransferTransaction() {
-        Call<ResponseObject<Transaction>> call = apiService.createTransaction(transaction);
+
+        Call<ResponseObject<Transaction>> call = apiService.createTransaction(TransactionMapper.toTransactionDTO(transaction));
         call.enqueue(new Callback<ResponseObject<Transaction>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Response<ResponseObject<Transaction>> response) {
+                lottieAnimationView.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getStatus() == 201) {
 
@@ -275,7 +283,6 @@ public class CreatingRecordActivity extends BaseActivity {
                                     .build();
 
                             Transaction feeTransaction = new Transaction.Builder()
-                                    .id(transaction.getId())
                                     .category(category)
                                     .categoryId(category.getId())
                                     .date(transaction.get_date())
@@ -316,6 +323,7 @@ public class CreatingRecordActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Throwable t) {
+                lottieAnimationView.setVisibility(View.GONE);
                 Log.e("API_ERROR", "API call failed: " + t.getMessage());
             }
         });
@@ -323,10 +331,11 @@ public class CreatingRecordActivity extends BaseActivity {
 
 
     private void handleSaveIncomeTransaction() {
-        Call<ResponseObject<Transaction>> call = apiService.createTransaction(transaction);
+        Call<ResponseObject<Transaction>> call = apiService.createTransaction(TransactionMapper.toTransactionDTO(transaction));
         call.enqueue(new Callback<ResponseObject<Transaction>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Response<ResponseObject<Transaction>> response) {
+                lottieAnimationView.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getStatus() == 201) {
                         // add transaction to transaction utils
@@ -338,6 +347,8 @@ public class CreatingRecordActivity extends BaseActivity {
                         double amount = updateWallet.get_amount();
                         amount = amount + transaction.get_amount();
                         updateWallet.set_amount(amount);
+
+                        lottieAnimationView.setVisibility(View.VISIBLE);
                         updateWallet(updateWallet, true);
                     }
                 }
@@ -345,16 +356,18 @@ public class CreatingRecordActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Throwable t) {
+                lottieAnimationView.setVisibility(View.GONE);
                 Log.e("API_ERROR", "API call failed: " + t.getMessage());
             }
         });
     }
 
     private void handleSaveExpenseTransaction() {
-        Call<ResponseObject<Transaction>> call = apiService.createTransaction(transaction);
+        Call<ResponseObject<Transaction>> call = apiService.createTransaction(TransactionMapper.toTransactionDTO(transaction));
         call.enqueue(new Callback<ResponseObject<Transaction>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Response<ResponseObject<Transaction>> response) {
+                lottieAnimationView.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getStatus() == 201) {
                         // add transaction to transaction utils
@@ -366,6 +379,8 @@ public class CreatingRecordActivity extends BaseActivity {
                         double amount = updateWallet.get_amount();
                         amount = amount - transaction.get_amount();
                         updateWallet.set_amount(amount);
+
+                        lottieAnimationView.setVisibility(View.VISIBLE);
                         updateWallet(updateWallet, true);
                     }
                 }
@@ -373,6 +388,7 @@ public class CreatingRecordActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Throwable t) {
+                lottieAnimationView.setVisibility(View.GONE);
                 Log.e("API_ERROR", "API call failed: " + t.getMessage());
             }
         });
@@ -380,11 +396,14 @@ public class CreatingRecordActivity extends BaseActivity {
 
     private void updateWallet(@NonNull Wallet wallet, boolean finish) {
 
-        Call<ResponseObject<Wallet>> call = apiService.updateWallet(wallet, Utils.currentUser.getId(), wallet.getId());
+        Call<ResponseObject<Wallet>> call = apiService.updateWallet(
+                WalletMapper.toWalletDTO(wallet),
+                Utils.currentUser.getId(),
+                wallet.getId());
         call.enqueue(new Callback<ResponseObject<Wallet>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Response<ResponseObject<Wallet>> response) {
-
+                lottieAnimationView.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getStatus() == 200) {
 
@@ -395,9 +414,6 @@ public class CreatingRecordActivity extends BaseActivity {
                             Toast.makeText(CreatingRecordActivity.this, "An error occur", Toast.LENGTH_SHORT).show();
                         }
                         if (finish) {
-
-
-
                             Intent mainActivity = new Intent(CreatingRecordActivity.this, MainActivity.class);
                             startActivity(mainActivity);
                             overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
@@ -410,10 +426,12 @@ public class CreatingRecordActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Throwable t) {
-
+                lottieAnimationView.setVisibility(View.GONE);
+                Log.d("API_ERROR", "API call failed" + t.getMessage());
             }
         });
     }
+
 
     private void validateInputs() {
 

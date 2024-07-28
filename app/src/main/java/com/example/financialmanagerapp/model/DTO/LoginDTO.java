@@ -1,15 +1,15 @@
-package com.example.financialmanagerapp.model.request;
+package com.example.financialmanagerapp.model.DTO;
 
 import com.google.gson.annotations.SerializedName;
 
-public class LoginRequest {
+public class LoginDTO {
     @SerializedName("_email")
     protected String email;
 
     @SerializedName("_password")
     protected String password;
 
-    public LoginRequest(Builder builder) {
+    public LoginDTO(Builder builder) {
         this.email = builder.email;
         this.password = builder.password;
     }
@@ -29,6 +29,6 @@ public class LoginRequest {
             return this;
         }
 
-        public LoginRequest build() { return new LoginRequest(this); }
+        public LoginDTO build() { return new LoginDTO(this); }
     }
 }

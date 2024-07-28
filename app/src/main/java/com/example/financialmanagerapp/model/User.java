@@ -17,10 +17,6 @@ public class User implements Serializable {
     public User() {
     }
 
-    public void setWallets(List<Wallet> wallets) {
-        this.wallets = wallets;
-    }
-
     public int getId() {
         return id;
     }

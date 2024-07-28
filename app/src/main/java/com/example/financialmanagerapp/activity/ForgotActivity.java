@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.financialmanagerapp.R;
-import com.example.financialmanagerapp.model.request.LoginRequest;
+import com.example.financialmanagerapp.model.DTO.LoginDTO;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
 import com.example.financialmanagerapp.retrofit.RetrofitClient;
@@ -110,7 +110,7 @@ public class ForgotActivity extends BaseActivity {
     }
 
     private void forgotPasswordAndProceed() {
-        LoginRequest request = new LoginRequest.Builder()
+        LoginDTO request = new LoginDTO.Builder()
                 .email(Objects.requireNonNull(edtEmail.getText()).toString())
                 .build();
 

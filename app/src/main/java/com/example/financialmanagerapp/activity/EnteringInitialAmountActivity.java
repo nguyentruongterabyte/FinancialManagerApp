@@ -17,7 +17,8 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.model.User;
 import com.example.financialmanagerapp.model.Wallet;
-import com.example.financialmanagerapp.model.request.RegisterRequest;
+import com.example.financialmanagerapp.model.mapper.WalletMapper;
+import com.example.financialmanagerapp.model.DTO.RegisterDTO;
 import com.example.financialmanagerapp.model.response.AuthResponse;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
@@ -130,7 +131,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
     }
 
     private void createAccountAndProceed() {
-        RegisterRequest request = new RegisterRequest.Builder()
+        RegisterDTO request = new RegisterDTO.Builder()
                 .name(user.get_name())
                 .email(user.get_email())
                 .password(user.get_password())
@@ -189,7 +190,7 @@ public class EnteringInitialAmountActivity extends BaseActivity {
                 .initialAmount(initialAmount)
                 .build();
 
-        Call<ResponseObject<Wallet>> call = apiService.createWallet(wallet);
+        Call<ResponseObject<Wallet>> call = apiService.createWallet(WalletMapper.toWalletDTO(wallet));
         call.enqueue(new Callback<ResponseObject<Wallet>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Response<ResponseObject<Wallet>> response) {

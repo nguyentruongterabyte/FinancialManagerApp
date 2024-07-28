@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.example.financialmanagerapp.model.response.ResponseObject;
-import com.example.financialmanagerapp.model.request.RefreshTokenRequest;
+import com.example.financialmanagerapp.model.DTO.RefreshTokenDTO;
 import com.example.financialmanagerapp.utils.SharedPreferencesUtils;
 import com.example.financialmanagerapp.utils.Utils;
 
@@ -44,7 +44,7 @@ public class RetrofitClient {
                         if (response.code() == 401 && refreshToken != null) {
                             synchronized (RetrofitClient.class) {
                                 try {
-                                    RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(refreshToken);
+                                    RefreshTokenDTO refreshTokenRequest = new RefreshTokenDTO(refreshToken);
                                     ResponseObject<String> newTokenResponse = refreshToken(context, refreshTokenRequest);
                                     if (newTokenResponse != null && newTokenResponse.getStatus() == 200) {
                                         accessToken = newTokenResponse.getResult();
@@ -85,7 +85,7 @@ public class RetrofitClient {
         return instance;
     }
 
-    private static ResponseObject<String> refreshToken(Context context, RefreshTokenRequest request) throws IOException {
+    private static ResponseObject<String> refreshToken(Context context, RefreshTokenDTO request) throws IOException {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Utils.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())

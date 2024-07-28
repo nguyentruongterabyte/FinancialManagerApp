@@ -17,12 +17,15 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.adapter.TransactionViewPagerAdapter;
 import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.SharedViewModel;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.Wallet;
+import com.example.financialmanagerapp.model.mapper.TransactionMapper;
+import com.example.financialmanagerapp.model.mapper.WalletMapper;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
 import com.example.financialmanagerapp.retrofit.RetrofitClient;
@@ -43,16 +46,17 @@ import retrofit2.Retrofit;
 
 public class EditingTransactionActivity extends BaseActivity {
 
+    LottieAnimationView lottieAnimationView;
     private ImageButton btnBack;
     private TextView tvTitle, btnSave;
     private TabLayout tabLayout;
     protected ViewPager2 viewPager;
     protected TransactionViewPagerAdapter transactionViewPagerAdapter;
     private SharedViewModel sharedViewModel;
-    protected Transaction transaction = new Transaction();
-    protected Transaction oldTransaction = new Transaction();
+    private Transaction transaction = new Transaction();
+    private Transaction oldTransaction = new Transaction();
     protected Calendar calendar = Calendar.getInstance();
-    protected FinancialManagerAPI apiService;
+    private FinancialManagerAPI apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +143,7 @@ public class EditingTransactionActivity extends BaseActivity {
     }
 
     private void handleUpdateTransaction() {
+
         // set date
         long millis = calendar.getTimeInMillis();
         Timestamp timestamp = new Timestamp(millis);
@@ -148,6 +153,8 @@ public class EditingTransactionActivity extends BaseActivity {
             finish();
             return;
         }
+
+        lottieAnimationView.setVisibility(View.VISIBLE);
         if (transaction.isFeeTransaction()) {
             handleFeeTransactionUpdateAndProceed();
         } else {
@@ -157,16 +164,18 @@ public class EditingTransactionActivity extends BaseActivity {
 
     private void handleTransactionUpdateAndProceed() {
         Call<ResponseObject<Transaction>> call = apiService.updateTransaction(
-                transaction,
+                TransactionMapper.toTransactionDTO(transaction),
                 Utils.currentUser.getId(),
                 transaction.getId());
 
         call.enqueue(new Callback<ResponseObject<Transaction>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Response<ResponseObject<Transaction>> response) {
+                lottieAnimationView.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getStatus() == 200) {
                         transaction = response.body().getResult();
+                        // Update transaction in utils transactions
                         Transaction.updateTransactionInList(transaction, Utils.transactions);
                         // update wallet amount
                         double amount = 0;
@@ -174,6 +183,8 @@ public class EditingTransactionActivity extends BaseActivity {
                         List<Wallet> wallets = Utils.currentUser.getWallets();
                         Wallet wallet = Wallet.findById(transaction.get_wallet_id(), wallets);
                         Wallet fromWallet = null;
+
+                        // old transaction
                         switch (oldTransaction.get_transaction_type_id()) {
                             case Utils.INCOME_TRANSACTION_ID:
                                 // Income transaction amount
@@ -191,6 +202,7 @@ public class EditingTransactionActivity extends BaseActivity {
                                 break;
                         }
 
+                        // new transaction
                         switch (transaction.get_transaction_type_id()) {
                             case Utils.INCOME_TRANSACTION_ID:
                                 amount += transaction.get_amount();
@@ -203,7 +215,7 @@ public class EditingTransactionActivity extends BaseActivity {
                                 amount += transaction.get_amount();
                                 break;
                         }
-
+                        lottieAnimationView.setVisibility(View.VISIBLE);
                         handleUpdateWalletAmount(wallet, fromWallet, amount, fromWalletAmount);
                     }
                 }
@@ -211,6 +223,7 @@ public class EditingTransactionActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Throwable t) {
+                lottieAnimationView.setVisibility(View.GONE);
                 Log.e("API_ERROR", "API call failed: " + t.getMessage());
             }
         });
@@ -219,14 +232,18 @@ public class EditingTransactionActivity extends BaseActivity {
     private void handleUpdateWalletAmount(Wallet wallet, Wallet fromWallet, double amount, double fromWalletAmount) {
         if (fromWallet != null) {
             fromWallet.set_amount(fromWalletAmount);
-            Call<ResponseObject<Wallet>> call = apiService.updateWallet(fromWallet, Utils.currentUser.getId(), fromWallet.getId());
+            Call<ResponseObject<Wallet>> call = apiService.updateWallet(WalletMapper.toWalletDTO(fromWallet), Utils.currentUser.getId(), fromWallet.getId());
             call.enqueue(new Callback<ResponseObject<Wallet>>() {
                 @Override
                 public void onResponse(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Response<ResponseObject<Wallet>> response) {
+                    lottieAnimationView.setVisibility(View.GONE);
                     if (response.isSuccessful() && response.body() != null) {
                         if (response.body().getStatus() == 200) {
-                            Log.d("myLog", "Update from wallet successfully!");
-                            handleUpdateWalletAmount(wallet, amount);
+                            Wallet updatedWallet = response.body().getResult();
+                            boolean isUpdated = Wallet.updateWalletInList(updatedWallet, Utils.currentUser.getWallets());
+                            if (isUpdated) {
+                                handleUpdateWalletAmount(wallet, amount);
+                            }
                         } else {
                             Toast.makeText(EditingTransactionActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -237,6 +254,7 @@ public class EditingTransactionActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Throwable t) {
+                    lottieAnimationView.setVisibility(View.GONE);
                     Log.d("API_ERROR", "API call failed: " + t.getMessage());
                 }
             });
@@ -247,10 +265,11 @@ public class EditingTransactionActivity extends BaseActivity {
 
     private void handleUpdateWalletAmount(Wallet wallet, double amount) {
         wallet.set_amount(amount);
-        Call<ResponseObject<Wallet>> call = apiService.updateWallet(wallet, Utils.currentUser.getId(), wallet.getId());
+        Call<ResponseObject<Wallet>> call = apiService.updateWallet(WalletMapper.toWalletDTO(wallet), Utils.currentUser.getId(), wallet.getId());
         call.enqueue(new Callback<ResponseObject<Wallet>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Response<ResponseObject<Wallet>> response) {
+                lottieAnimationView.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().getStatus() == 200) {
 
@@ -277,13 +296,57 @@ public class EditingTransactionActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<Wallet>> call, @NonNull Throwable t) {
+                lottieAnimationView.setVisibility(View.GONE);
                 Log.d("API_ERROR", "API call failed: " + t.getMessage());
             }
         });
     }
 
     private void handleFeeTransactionUpdateAndProceed() {
+        // get parent transaction from fee transaction
+        Transaction parentTransaction = transaction.getParent();
 
+        // get fee from expense transaction
+        double fee = transaction.get_amount();
+
+        // update fee in parent transaction
+        parentTransaction.set_fee(fee);
+
+        // get from wallet and perform update amount
+        Wallet fromWallet = parentTransaction.getFrom_wallet();
+        double amount = fromWallet.get_amount() + oldTransaction.get_amount() - fee;
+
+        // Call API
+        Call<ResponseObject<Transaction>> call = apiService.updateTransaction(
+                TransactionMapper.toTransactionDTO(parentTransaction),
+                Utils.currentUser.getId(),
+                parentTransaction.getId());
+        call.enqueue(new Callback<ResponseObject<Transaction>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Response<ResponseObject<Transaction>> response) {
+                lottieAnimationView.setVisibility(View.GONE);
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getStatus() == 200) {
+                        // Update parent transaction in transactions utils
+                        Transaction.updateTransactionInList(parentTransaction, Utils.transactions);
+
+                        // Update wallet amount and finish
+                        lottieAnimationView.setVisibility(View.VISIBLE);
+                        handleUpdateWalletAmount(fromWallet, amount);
+                    } else {
+                        Toast.makeText(EditingTransactionActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(EditingTransactionActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseObject<Transaction>> call, @NonNull Throwable t) {
+                lottieAnimationView.setVisibility(View.GONE);
+                Log.d("API_ERROR", "API call failed: " + t.getMessage());
+            }
+        });
     }
 
     private void setInactiveTab(TabLayout.Tab tab) {
@@ -459,6 +522,8 @@ public class EditingTransactionActivity extends BaseActivity {
         // set adapter tab
         transactionViewPagerAdapter = new TransactionViewPagerAdapter(this, Utils.UPDATING_TRANSACTION);
         viewPager.setAdapter(transactionViewPagerAdapter);
+
+        lottieAnimationView = findViewById(R.id.animationView);
 
         // set tabs name
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {

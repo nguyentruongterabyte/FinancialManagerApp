@@ -51,7 +51,7 @@ import retrofit2.Retrofit;
 
 public class TransactionTabFragment extends Fragment {
 
-    private final static int TRANSACTIONS_PER_PAGE = 10; // 200 transactions a page
+    private final static int TRANSACTIONS_PER_PAGE = 200; // 200 transactions a page
     private boolean isLoading = false;
     private int currentPage = 1;
     private ImageView btnBalance, btnHideBalance;
@@ -85,6 +85,7 @@ public class TransactionTabFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        isLoading = false;
         initData();
     }
 
@@ -116,14 +117,22 @@ public class TransactionTabFragment extends Fragment {
     }
 
     private void getTransactions(int page) {
+        if (Utils.currentUser == null) return;
+
         if (isLoading) return;
         isLoading = true;
 
+
         if (Utils.transactions.size() == 0) {
-            Call<ResponseObject<List<Transaction>>> call = apiService.getTransactionByUserId(Utils.currentUser.getId(), page, TRANSACTIONS_PER_PAGE);
+            // set invisible list view
+            noRecord.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+            Call<ResponseObject<List<Transaction>>> call = apiService.getTransactionByUserId(
+                    Utils.currentUser.getId(), page, TRANSACTIONS_PER_PAGE);
             call.enqueue(new Callback<ResponseObject<List<Transaction>>>() {
                 @Override
-                public void onResponse(@NonNull Call<ResponseObject<List<Transaction>>> call, @NonNull Response<ResponseObject<List<Transaction>>> response) {
+                public void onResponse(@NonNull Call<ResponseObject<List<Transaction>>> call,
+                                       @NonNull Response<ResponseObject<List<Transaction>>> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         if (response.body().getStatus() == 200) {
 
@@ -161,6 +170,9 @@ public class TransactionTabFragment extends Fragment {
                 }
             });
         } else {
+            // set invisible list view
+            noRecord.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
             renderTransactions();
         }
 
@@ -172,11 +184,11 @@ public class TransactionTabFragment extends Fragment {
         noRecord.setVisibility(View.GONE);
         listView.setVisibility(View.VISIBLE);
 
-        // Add fee transactions only if they haven't been handled already
-        if (!Utils.feesHandled) {
-            handleAddFeeTransactions(Utils.transactions);
-            Utils.feesHandled = true; // Set the flag to true after handling fees
-        }
+        // remove all fee transaction
+        Utils.transactions.removeIf(Transaction::isFeeTransaction);
+
+        // Add fee transactions
+        handleAddFeeTransactions(Utils.transactions);
 
         syncWalletsInTransactions(Utils.transactions);
 
@@ -187,8 +199,10 @@ public class TransactionTabFragment extends Fragment {
         // find the position of the latest updated_at
         int latestPosition = findLastedTransactionPosition(transactionDates);
 
-        if (latestPosition != 1) {
-            listView.post(() -> listView.setSelection(latestPosition));
+        if (latestPosition != -1) {
+            listView.post(() ->
+                listView.setSelection(latestPosition)
+            );
         }
     }
 
@@ -230,7 +244,7 @@ public class TransactionTabFragment extends Fragment {
                         .toWallet(transaction.getTo_wallet())
                         .toWalletId(transaction.get_to_wallet_id())
                         .description("Fee")
-                        .amount(transaction.get_amount())
+                        .amount(transaction.get_fee())
                         .transactionTypeId(Utils.EXPENSE_TRANSACTION_ID)
                         .updatedAt(transaction.getUpdated_at())
                         .isFeeTransaction(true)
@@ -374,7 +388,7 @@ public class TransactionTabFragment extends Fragment {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem + visibleItemCount >= totalItemCount && !isLoading && Utils.currentUser != null) {
+                if (firstVisibleItem + visibleItemCount >= totalItemCount && !isLoading) {
                     currentPage++;
                     getTransactions(currentPage);
                 }

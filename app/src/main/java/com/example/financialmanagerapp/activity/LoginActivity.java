@@ -18,7 +18,7 @@ import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.financialmanagerapp.R;
-import com.example.financialmanagerapp.model.request.LoginRequest;
+import com.example.financialmanagerapp.model.DTO.LoginDTO;
 import com.example.financialmanagerapp.model.response.AuthResponse;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
@@ -93,7 +93,7 @@ public class LoginActivity extends BaseActivity {
 
         // handle event button login clicked
         btnLogin.setOnClickListener(v -> {
-            LoginRequest request = new LoginRequest.Builder()
+            LoginDTO request = new LoginDTO.Builder()
                     .email(Objects.requireNonNull(edtEmail.getText()).toString())
                     .password(Objects.requireNonNull(edtPassword.getText()).toString())
                     .build();

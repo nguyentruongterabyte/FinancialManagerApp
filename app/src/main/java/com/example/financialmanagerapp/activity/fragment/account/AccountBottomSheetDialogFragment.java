@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.model.User;
 import com.example.financialmanagerapp.model.Wallet;
-import com.example.financialmanagerapp.model.request.RefreshTokenRequest;
+import com.example.financialmanagerapp.model.DTO.RefreshTokenDTO;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
 import com.example.financialmanagerapp.retrofit.RetrofitClient;
@@ -68,7 +68,7 @@ public class AccountBottomSheetDialogFragment extends BottomSheetDialogFragment 
 
     private void handleSignOut() {
 
-        RefreshTokenRequest request = new RefreshTokenRequest(SharedPreferencesUtils.getRefreshToken(getContext()));
+        RefreshTokenDTO request = new RefreshTokenDTO(SharedPreferencesUtils.getRefreshToken(getContext()));
         Call<ResponseObject<Void>> call = apiService.logout(request);
         call.enqueue(new Callback<ResponseObject<Void>>() {
             @Override

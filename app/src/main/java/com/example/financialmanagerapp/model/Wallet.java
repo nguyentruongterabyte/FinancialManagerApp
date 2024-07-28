@@ -1,36 +1,18 @@
 package com.example.financialmanagerapp.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 import java.util.List;
 
 public class Wallet implements Serializable {
-
     protected int id;
-
-    @SerializedName("_name")
     protected String _name;
-    @SerializedName("_initial_amount")
     protected double _initial_amount;
-    @SerializedName("_amount")
     protected double _amount;
-    @SerializedName("_color")
     protected String _color;
-
-    @SerializedName("_exclude")
     protected int _exclude;
-    @SerializedName("_account_id")
     protected int _account_id;
-
-    @SerializedName("_wallet_type_code")
     protected String _wallet_type_code;
-
-    @SerializedName("_icon")
     protected int _icon;
-
-    protected WalletType wallet_type;
-
     protected List<String> errors;
 
     public Wallet() {
@@ -58,6 +40,14 @@ public class Wallet implements Serializable {
         }
 
         return isUpdated;
+    }
+
+    public int get_account_id() {
+        return _account_id;
+    }
+
+    public String get_wallet_type_code() {
+        return _wallet_type_code;
     }
 
     public void set_amount(double _amount) {
@@ -101,7 +91,6 @@ public class Wallet implements Serializable {
         this._color = builder.color;
         this._exclude = builder.exclude;
         this._account_id = builder.accountId;
-        this.wallet_type = builder.walletType;
         this._initial_amount = builder.initialAmount;
         this._wallet_type_code = builder.walletTypeCode;
         this._icon = builder.icon;
@@ -116,7 +105,6 @@ public class Wallet implements Serializable {
         private int exclude;
         private int accountId;
         private String walletTypeCode;
-        private WalletType walletType;
         private double amount;
 
 
@@ -156,10 +144,6 @@ public class Wallet implements Serializable {
             return this;
         }
 
-        public Builder walletType(WalletType walletType) {
-            this.walletType = walletType;
-            return this;
-        }
 
         public Builder walletTypeCode(String walletTypeCode) {
             this.walletTypeCode = walletTypeCode;

@@ -1,8 +1,8 @@
-package com.example.financialmanagerapp.model.request;
+package com.example.financialmanagerapp.model.DTO;
 
 import com.google.gson.annotations.SerializedName;
 
-public class RegisterRequest {
+public class RegisterDTO {
     @SerializedName("_name")
     protected String name;
 
@@ -18,7 +18,7 @@ public class RegisterRequest {
     @SerializedName("_initial_currency_id")
     protected int initialCurrencyId;
 
-    public RegisterRequest(Builder builder) {
+    public RegisterDTO(Builder builder) {
         this.name = builder.name;
         this.email = builder.email;
         this.password = builder.password;
@@ -57,6 +57,6 @@ public class RegisterRequest {
             return this;
         }
 
-        public RegisterRequest build() { return new RegisterRequest(this); }
+        public RegisterDTO build() { return new RegisterDTO(this); }
     }
 }

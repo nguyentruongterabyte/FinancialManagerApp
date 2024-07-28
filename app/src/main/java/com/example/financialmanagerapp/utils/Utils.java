@@ -22,7 +22,6 @@ public class Utils {
     // Currencies
     public static List<Currency> currencies = new ArrayList<>();
     public static List<Transaction> transactions = new ArrayList<>();
-    public static boolean feesHandled = false;
 
     // Current user
     public static User currentUser = null;

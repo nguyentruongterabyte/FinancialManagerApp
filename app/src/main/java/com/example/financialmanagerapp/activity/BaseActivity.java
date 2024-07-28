@@ -1,12 +1,11 @@
 package com.example.financialmanagerapp.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.financialmanagerapp.R;
@@ -25,5 +24,6 @@ public class BaseActivity extends AppCompatActivity {
         // Optionally set light status bar for dark status bar color
         View decor = getWindow().getDecorView();
         decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+
     }
 }

@@ -125,11 +125,10 @@ public class TransactionDateAdapter extends BaseAdapter {
             return Long.compare(time2, time1);
         });
 
-
         // set transaction adapter to list view
         TransactionAdapter adapter = new TransactionAdapter(context, transactionDate.getTransactions(), Utils.categoriesIcons);
-        listView.setAdapter(adapter);
 
+        listView.setAdapter(adapter);
         Utils.setListViewHeightBasedOnItems(listView);
     }
 
@@ -140,4 +139,5 @@ public class TransactionDateAdapter extends BaseAdapter {
         tvTotalAmount = convertView.findViewById(R.id.tv_total_amount);
         listView = convertView.findViewById(R.id.list_view);
     }
+
 }

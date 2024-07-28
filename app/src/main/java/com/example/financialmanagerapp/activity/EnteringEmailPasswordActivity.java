@@ -16,7 +16,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.model.User;
 import com.example.financialmanagerapp.model.response.ResponseObject;
-import com.example.financialmanagerapp.model.request.EmailCheckerRequest;
+import com.example.financialmanagerapp.model.DTO.EmailCheckerDTO;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
 import com.example.financialmanagerapp.retrofit.RetrofitClient;
 import com.example.financialmanagerapp.utils.EmailValidator;
@@ -153,7 +153,7 @@ public class EnteringEmailPasswordActivity extends BaseActivity {
     }
 
     private void checkEmailExistsAndProceed(String email, String password, String passwordConfirmation) {
-        Call<ResponseObject<List<String>>> call = apiService.emailChecker(new EmailCheckerRequest(email));
+        Call<ResponseObject<List<String>>> call = apiService.emailChecker(new EmailCheckerDTO(email));
         call.enqueue(new Callback<ResponseObject<List<String>>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<List<String>>> call, @NonNull Response<ResponseObject<List<String>>> response) {

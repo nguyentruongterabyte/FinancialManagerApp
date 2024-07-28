@@ -2,8 +2,6 @@ package com.example.financialmanagerapp.model;
 
 import android.annotation.SuppressLint;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -13,28 +11,18 @@ import java.util.Objects;
 public class Transaction implements Serializable {
     protected int id;
     protected Timestamp updated_at;
-    @SerializedName("_amount")
     protected Double _amount;
-    @SerializedName("_description")
     protected String _description;
-    @SerializedName("_wallet_id")
     protected int _wallet_id;
     protected Wallet wallet;
-    @SerializedName("_category_id")
     protected Integer _category_id;
-    @SerializedName("_memo")
     protected String _memo;
-    @SerializedName("_from_wallet_id")
     protected Integer _from_wallet_id;
     protected Wallet from_wallet;
-    @SerializedName("_to_wallet_id")
     protected Integer _to_wallet_id;
     protected Wallet to_wallet;
-    @SerializedName("_fee")
     protected double _fee;
-    @SerializedName("_transaction_type_id")
     protected int _transaction_type_id;
-    @SerializedName("_date")
     protected Timestamp _date;
 
     protected Category category;
@@ -76,6 +64,10 @@ public class Transaction implements Serializable {
             }
         }
 
+    }
+
+    public void setUpdated_at(Timestamp updated_at) {
+        this.updated_at = updated_at;
     }
 
     public Timestamp getUpdated_at() {
@@ -342,4 +334,12 @@ public class Transaction implements Serializable {
         }
     }
 
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", updated_at=" + updated_at +
+                '}';
+    }
 }
