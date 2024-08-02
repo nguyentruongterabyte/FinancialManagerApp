@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class WalletType implements Serializable {
     protected String _code;
-    private String _name;
+    protected String _name;
 
     public String get_code() {
         return _code;

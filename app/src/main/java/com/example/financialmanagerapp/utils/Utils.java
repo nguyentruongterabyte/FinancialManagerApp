@@ -1,7 +1,11 @@
 package com.example.financialmanagerapp.utils;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -44,6 +48,19 @@ public class Utils {
             R.drawable.ic_salary_2, R.drawable.ic_money_bill_trend_up, R.drawable.ic_piggy_bank,
             R.drawable.ic_receipt, R.drawable.ic_wallet_2, R.drawable.ic_bonus_2,
     };
+
+    // Colors array
+    public static int[] colors = {
+            R.color.color_1, R.color.color_2, R.color.color_3,
+            R.color.color_4, R.color.color_5, R.color.color_6,
+            R.color.color_8, R.color.color_9, R.color.color_10,
+            R.color.color_11, R.color.color_12, R.color.color_13,
+            R.color.color_14, R.color.color_15, R.color.color_16,
+            R.color.color_17, R.color.color_18, R.color.color_19,
+            R.color.color_20, R.color.color_21, R.color.color_22,
+            R.color.color_23, R.color.color_24
+    };
+
     // Categories
     public static List<Category> categories = new ArrayList<>();
 
@@ -83,5 +100,18 @@ public class Utils {
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
         listView.requestLayout();
+    }
+
+    public static void formattingImageBackground(Context context, ImageView imageView, String hexColor) {
+        int color = Color.parseColor(hexColor);
+
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+
+        // Convert dp to px
+        drawable.setCornerRadius(12 * context.getResources().getDisplayMetrics().density);
+        drawable.setColor(color);
+
+        imageView.setBackground(drawable);
     }
 }

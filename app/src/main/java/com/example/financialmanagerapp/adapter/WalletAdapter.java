@@ -9,6 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.model.Wallet;
 import com.example.financialmanagerapp.utils.MoneyFormatter;
@@ -57,8 +59,7 @@ public class WalletAdapter extends BaseAdapter {
         nameView.setText(wallet.get_name());
         balanceView.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), wallet.get_amount()));
 
-        int color = Color.parseColor(wallet.get_color());
-        iconView.setBackgroundColor(color);
+        Utils.formattingImageBackground(context, iconView, wallet.get_color());
         return convertView;
     }
 }

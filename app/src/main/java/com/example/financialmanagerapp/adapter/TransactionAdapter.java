@@ -66,7 +66,8 @@ public class TransactionAdapter extends BaseAdapter {
         if (transaction.get_transaction_type_id() == Utils.TRANSFER_TRANSACTION_ID) {
             // set icon view and its background color
             iconView.setImageResource(R.drawable.ic_transaction);
-            iconView.setBackgroundColor(ContextCompat.getColor(context, R.color.color_2));
+            Utils.formattingImageBackground(context, iconView, "#006067");
+
             // set text view wallet
             Wallet fromWallet = transaction.getFrom_wallet();
             Wallet toWallet = transaction.getTo_wallet();
@@ -76,9 +77,7 @@ public class TransactionAdapter extends BaseAdapter {
 
             // set icon view and its background color
             iconView.setImageResource(icons[transaction.getCategory().get_icon()]);
-            int color = Color.parseColor(transaction.getCategory().get_color());
-            iconView.setBackgroundColor(color);
-
+            Utils.formattingImageBackground(context, iconView, transaction.getCategory().get_color());
             // set text view wallet
             Wallet wallet = transaction.getWallet();
             tvWalletName.setText(wallet.get_name());

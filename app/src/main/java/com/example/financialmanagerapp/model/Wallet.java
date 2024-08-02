@@ -1,5 +1,7 @@
 package com.example.financialmanagerapp.model;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -14,6 +16,8 @@ public class Wallet implements Serializable {
     protected String _wallet_type_code;
     protected int _icon;
     protected List<String> errors;
+    protected WalletType wallet_type;
+    protected List<Transaction> transactions;
 
     public Wallet() {
     }
@@ -40,6 +44,38 @@ public class Wallet implements Serializable {
         }
 
         return isUpdated;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void set_icon(int _icon) {
+        this._icon = _icon;
+    }
+
+    public void set_name(String _name) {
+        this._name = _name;
+    }
+
+    public void set_initial_amount(double _initial_amount) {
+        this._initial_amount = _initial_amount;
+    }
+
+    public void set_account_id(int _account_id) {
+        this._account_id = _account_id;
+    }
+
+    public void set_color(String _color) {
+        this._color = _color;
+    }
+
+    public void set_exclude(int _exclude) {
+        this._exclude = _exclude;
+    }
+
+    public void set_wallet_type_code(String _wallet_type_code) {
+        this._wallet_type_code = _wallet_type_code;
     }
 
     public int get_account_id() {
@@ -153,7 +189,20 @@ public class Wallet implements Serializable {
         public Wallet build() {
             return new Wallet(this);
         }
-
     }
 
+    @Override
+    @NonNull
+    public String toString() {
+        return "Wallet{" +
+                "_name='" + _name + '\'' +
+                ", _initial_amount=" + _initial_amount +
+                ", _amount=" + _amount +
+                ", _color='" + _color + '\'' +
+                ", _exclude=" + _exclude +
+                ", _account_id=" + _account_id +
+                ", _wallet_type_code='" + _wallet_type_code + '\'' +
+                ", _icon=" + _icon +
+                '}';
+    }
 }

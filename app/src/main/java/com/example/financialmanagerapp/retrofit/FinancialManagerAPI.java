@@ -11,6 +11,7 @@ import com.example.financialmanagerapp.model.DTO.WalletDTO;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.User;
 import com.example.financialmanagerapp.model.Wallet;
+import com.example.financialmanagerapp.model.WalletType;
 import com.example.financialmanagerapp.model.response.AuthResponse;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 
@@ -68,6 +69,10 @@ public interface FinancialManagerAPI {
             @Body WalletDTO request,
             @Path("id") int userId,
             @Path("walletId") int walletId);
+
+    // Wallet type
+    @GET("api/wallet-type")
+    Call<ResponseObject<List<WalletType>>> getWalletTypes();
 
     // Category
     @GET("api/category")

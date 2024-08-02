@@ -4,7 +4,6 @@ package com.example.financialmanagerapp.activity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -81,7 +80,7 @@ public class TransactionDetailActivity extends BaseActivity {
                     .setPositiveButton("DELETE", (dialog, which) ->
                             handleDelete()
                     )
-                    .setNegativeButton("Cancel", (dialog, which) -> {
+                    .setNegativeButton("CANCEL", (dialog, which) -> {
                     });
 
             AlertDialog dialog = builder.create();
@@ -285,7 +284,7 @@ public class TransactionDetailActivity extends BaseActivity {
                 }
 
                 icon.setImageResource(R.drawable.ic_transaction);
-                icon.setBackgroundColor(ContextCompat.getColor(this, R.color.color_2));
+                Utils.formattingImageBackground(this, icon, "#006067");
 
             } else {
                 tvCategory.setText(transaction.getCategory().get_name());
@@ -293,8 +292,7 @@ public class TransactionDetailActivity extends BaseActivity {
                 tvFeeContainer.setVisibility(View.GONE);
                 // set icon view and its background color
                 icon.setImageResource(Utils.categoriesIcons[transaction.getCategory().get_icon()]);
-                int color = Color.parseColor(transaction.getCategory().get_color());
-                icon.setBackgroundColor(color);
+                Utils.formattingImageBackground(this, icon, transaction.getCategory().get_color());
             }
             icon.setColorFilter(ContextCompat.getColor(this, R.color.white));
 

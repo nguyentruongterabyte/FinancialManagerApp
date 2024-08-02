@@ -17,7 +17,6 @@
         android:src="@drawable/ic_entertainment"
         android:importantForAccessibility="no"
         android:padding="10dp"
-        android:background="@drawable/wallet_image"
         android:backgroundTint="@null"
         />
 

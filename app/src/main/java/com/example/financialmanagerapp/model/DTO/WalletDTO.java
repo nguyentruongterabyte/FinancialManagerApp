@@ -1,5 +1,7 @@
 package com.example.financialmanagerapp.model.DTO;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 public class WalletDTO {
@@ -48,8 +50,8 @@ public class WalletDTO {
     public void set_wallet_type_code(String _wallet_type_code) {
         this._wallet_type_code = _wallet_type_code;
     }
-
     public void set_icon(int _icon) {
         this._icon = _icon;
     }
+
 }

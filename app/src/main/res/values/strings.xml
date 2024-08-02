@@ -102,5 +102,16 @@
     <string name="type">Type</string>
     <string name="_07_23_2024_10_25">07/23/2024 10:25</string>
     <string name="food">Food</string>
+    <string name="manager_2">Manager(2)</string>
+    <string name="add_wallet">Add Wallet</string>
+    <string name="general">General</string>
+    <string name="color">Color</string>
+    <string name="wallet_s_name">Wallet\'s name</string>
+    <string name="icon">Icon</string>
+    <string name="exclude">Exclude</string>
+    <string name="ignore_the_balance_of_this_wallet_on_the_total_balance">Ignore the balance of this wallet on the total balance</string>
+    <string name="_3_transactions">3 transactions</string>
+    <string name="transaction_list">Transaction list</string>
+    <string name="view_all">View all</string>
 
 </resources>

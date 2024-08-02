@@ -86,7 +86,6 @@
                     android:layout_width="52dp"
                     android:layout_height="52dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/wallet_image"
                     android:backgroundTint="@null"
                     android:importantForAccessibility="no"
                     android:padding="10dp"
