@@ -32,10 +32,12 @@ public class TransactionDateAdapter extends BaseAdapter {
             tvTotalAmount;
 
     private ExpandedListView listView;
+    protected int walletId;
 
-    public TransactionDateAdapter(Context context, List<TransactionDate> transactionDates) {
+    public TransactionDateAdapter(Context context, List<TransactionDate> transactionDates, int walletId) {
         this.context = context;
         this.transactionDates = transactionDates;
+        this.walletId = walletId;
     }
 
     @Override
@@ -79,7 +81,15 @@ public class TransactionDateAdapter extends BaseAdapter {
                     totalAmount += transaction.get_amount();
                     break;
                 case Utils.TRANSFER_TRANSACTION_ID:
-                    totalAmount -= transaction.get_fee();
+                    if (walletId == -1) {
+                        totalAmount -= transaction.get_fee();
+                    } else {
+                        if (transaction.get_from_wallet_id() == walletId) {
+                            totalAmount -= transaction.get_amount();
+                        } else {
+                            totalAmount += transaction.get_amount();
+                        }
+                    }
                     break;
             }
         }
@@ -113,12 +123,23 @@ public class TransactionDateAdapter extends BaseAdapter {
                 TimerFormatter.getMonthOfYearText(transactionDate.getMonthOfYear()),
                 transactionDate.getYear()));
 
+        List<Transaction> transactions = transactionDate.getTransactions();
+
+
+        if (walletId != -1)
+            for (int i = transactions.size() - 1; i >= 0; i--)
+                if (transactions.get(i).isFeeTransaction() && transactions.get(i).getParent().get_from_wallet_id() != walletId)
+                    // remove transaction at i
+                    // is fee transactions of other wallets
+                    transactions.remove(i);
+
+
         // calculate total amount
-        double totalAmount = calculateTotalAmount(transactionDate.getTransactions());
+        double totalAmount = calculateTotalAmount(transactions);
         tvTotalAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), totalAmount));
 
         // sort the list from latest to oldest time
-        transactionDate.getTransactions().sort((t1, t2) -> {
+        transactions.sort((t1, t2) -> {
             long time1 = t1.get_date().getTime();
             long time2 = t2.get_date().getTime();
 
@@ -126,7 +147,7 @@ public class TransactionDateAdapter extends BaseAdapter {
         });
 
         // set transaction adapter to list view
-        TransactionAdapter adapter = new TransactionAdapter(context, transactionDate.getTransactions(), Utils.categoriesIcons);
+        TransactionAdapter adapter = new TransactionAdapter(context, transactions, Utils.categoriesIcons, walletId);
 
         listView.setAdapter(adapter);
         Utils.setListViewHeightBasedOnItems(listView);

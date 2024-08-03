@@ -2,7 +2,6 @@ package com.example.financialmanagerapp.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +26,13 @@ public class TransactionAdapter extends BaseAdapter {
     protected Context context;
     protected List<Transaction> transactions;
     protected int[] icons;
+    protected int walletId;
 
-    public TransactionAdapter(Context context, List<Transaction> transactions, int[] icons) {
+    public TransactionAdapter(Context context, List<Transaction> transactions, int[] icons, int walletId) {
         this.context = context;
         this.transactions = transactions;
         this.icons = icons;
+        this.walletId = walletId;
     }
 
     @Override
@@ -104,8 +105,18 @@ public class TransactionAdapter extends BaseAdapter {
                 break;
             case Utils.TRANSFER_TRANSACTION_ID:
                 amount = transaction.get_amount();
-                tvAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), amount));
-                tvAmount.setTextColor(ContextCompat.getColor(context, R.color.black));
+                if (walletId == -1) {
+                    tvAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), amount));
+                    tvAmount.setTextColor(ContextCompat.getColor(context, R.color.black));
+                } else {
+                    if (transaction.get_from_wallet_id() == walletId) {
+                        tvAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), -amount));
+                        tvAmount.setTextColor(ContextCompat.getColor(context, R.color.color_6));
+                    } else {
+                        tvAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), amount));
+                        tvAmount.setTextColor(ContextCompat.getColor(context, R.color.primary));
+                    }
+                }
                 break;
         }
 

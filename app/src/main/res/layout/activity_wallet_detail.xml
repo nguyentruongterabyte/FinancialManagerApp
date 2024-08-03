@@ -196,7 +196,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/income" />
+                        android:text="@string/transfer" />
 
                     <View
                         android:layout_width="0dp"
@@ -218,7 +218,8 @@
                 android:layout_marginTop="@dimen/m_20"
                 android:background="@color/white"
                 android:orientation="vertical"
-                android:padding="@dimen/m_10"
+                android:paddingTop="@dimen/m_10"
+                android:paddingBottom="@dimen/m_10"
                 app:layout_constraintTop_toBottomOf="@id/section_1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 >
@@ -227,7 +228,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingBottom="@dimen/m_10">
+                    android:paddingBottom="@dimen/m_10"
+                    android:paddingStart="@dimen/m_20"
+                    android:paddingEnd="@dimen/m_20"
+                    >
 
                     <TextView
                         android:layout_width="wrap_content"

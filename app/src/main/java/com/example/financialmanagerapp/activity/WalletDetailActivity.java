@@ -1,16 +1,16 @@
 package com.example.financialmanagerapp.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.content.ContextCompat;
 
 import com.example.financialmanagerapp.R;
-import com.example.financialmanagerapp.adapter.WalletAdapter;
+import com.example.financialmanagerapp.adapter.CategoryTransactionAdapter;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.Wallet;
 import com.example.financialmanagerapp.utils.MoneyFormatter;
@@ -42,17 +42,20 @@ public class WalletDetailActivity extends BaseActivity {
             finish();
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         });
+
+
+        // Set up the OnBackPressedCallback
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Call super.onBackPressed() to handle default back press behavior
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        });
     }
 
     private void initData() {
-//      Test
-        WalletAdapter adapter = new WalletAdapter(
-                this,
-                Utils.currentUser.getWallets(),
-                Utils.walletIcons);
-        listView.setAdapter(adapter);
-        Utils.setListViewHeightBasedOnItems(listView);
-
         // get the wallet from extra
         wallet = (Wallet) getIntent().getSerializableExtra("wallet");
 
@@ -74,9 +77,18 @@ public class WalletDetailActivity extends BaseActivity {
                     Utils.currentUser.getCurrency().get_symbol(),
                     wallet.get_initial_amount()));
 
+            Utils.addFeeTransactions(wallet.getTransactions());
             // handle counting transaction types
             handleCountingTransactionTypes();
+
+            // set transactions by category for list view
+            CategoryTransactionAdapter adapter = new CategoryTransactionAdapter(
+                    this, wallet.getTransactions(), wallet.getId(), Utils.categoriesIcons);
+            listView.setAdapter(adapter);
+            Utils.setListViewHeightBasedOnItems(listView);
         }
+
+
     }
 
     private void handleCountingTransactionTypes() {
@@ -90,7 +102,10 @@ public class WalletDetailActivity extends BaseActivity {
                     incomeTransactionsQuantity += 1;
                     break;
                 case Utils.EXPENSE_TRANSACTION_ID:
-                    expenseTransactionsQuantity += 1;
+                    if (!transaction.isFeeTransaction()
+                            || (transaction.isFeeTransaction() && transaction.getParent().get_from_wallet_id() == wallet.getId())
+                    )
+                        expenseTransactionsQuantity += 1;
                     break;
                 case Utils.TRANSFER_TRANSACTION_ID:
                     transferTransactionsQuantity += 1;

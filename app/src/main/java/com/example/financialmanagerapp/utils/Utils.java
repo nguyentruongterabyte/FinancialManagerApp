@@ -1,5 +1,6 @@
 package com.example.financialmanagerapp.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -8,16 +9,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.Currency;
 import com.example.financialmanagerapp.model.Transaction;
+import com.example.financialmanagerapp.model.TransactionDate;
 import com.example.financialmanagerapp.model.User;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class Utils {
     // Base URL
@@ -113,5 +121,123 @@ public class Utils {
         drawable.setColor(color);
 
         imageView.setBackground(drawable);
+    }
+
+    public static Map<String, List<Transaction>> groupTransactionsByCategoryName(List<Transaction> transactions) {
+        Map<String, List<Transaction>> transactionsByCategory = new HashMap<>();
+
+        for (Transaction transaction : transactions) {
+            // Transfer transactions
+            if (transaction.get_transaction_type_id() == Utils.TRANSFER_TRANSACTION_ID) {
+                if (!transactionsByCategory.containsKey("Transfer")) {
+                    transactionsByCategory.put("Transfer", new ArrayList<>());
+                }
+
+                Objects.requireNonNull(transactionsByCategory.get("Transfer")).add(transaction);
+            } else { // other transactions
+                String transactionName = transaction.getCategory().get_name();
+                if (!transactionsByCategory.containsKey(transactionName)) {
+                    transactionsByCategory.put(transactionName, new ArrayList<>());
+                }
+
+                Objects.requireNonNull(transactionsByCategory.get(transactionName)).add(transaction);
+            }
+        }
+
+        return transactionsByCategory;
+    }
+
+    public static void addFeeTransactions(List<Transaction> transactions) {
+        List<Transaction> feeTransactions = new ArrayList<>();
+        for (Transaction transaction : transactions)
+            if (transaction.get_fee() > 0) {
+                Category category = new Category.Builder()
+                        .id(Utils.OTHER_CATEGORY_EXPENSE_TRANSACTION_ID)
+                        .name("Others")
+                        .icon(13)
+                        .color("#603C34")
+                        .transactionTypeId(Utils.EXPENSE_TRANSACTION_ID)
+                        .build();
+
+                Transaction feeTransaction = new Transaction.Builder()
+                        .category(category)
+                        .categoryId(category.getId())
+                        .date(transaction.get_date())
+                        .wallet(transaction.getFrom_wallet())
+                        .walletId(transaction.get_from_wallet_id())
+                        .toWallet(transaction.getTo_wallet())
+                        .toWalletId(transaction.get_to_wallet_id())
+                        .description("Fee")
+                        .amount(transaction.get_fee())
+                        .transactionTypeId(Utils.EXPENSE_TRANSACTION_ID)
+                        .updatedAt(transaction.getUpdated_at())
+                        .isFeeTransaction(true)
+                        .parent(transaction)
+                        .build();
+                feeTransactions.add(feeTransaction);
+            }
+        transactions.addAll(feeTransactions);
+    }
+
+
+    public static List<TransactionDate> groupTransactionsByDate(Context context, List<Transaction> transactions) {
+        // Step 1: Create a map to group transaction by date
+        Map<String, List<Transaction>> transactionsByDate = new HashMap<>();
+
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        // Step 2: Iterate over transactions and group by date
+        for (Transaction transaction : transactions) {
+
+            Calendar calendar = TimerFormatter.getCalendar(transaction.get_date());
+            String dateKey = dateFormatter.format(calendar.getTime());
+
+            if (!transactionsByDate.containsKey(dateKey)) {
+                transactionsByDate.put(dateKey, new ArrayList<>());
+            }
+
+            Objects.requireNonNull(transactionsByDate.get(dateKey)).add(transaction);
+
+        }
+
+        // step 3: convert the map to a list of TransactionDate objects
+        List<TransactionDate> groupedTransactionDates = new ArrayList<>();
+        for (Map.Entry<String, List<Transaction>> entry : transactionsByDate.entrySet()) {
+            String dateKey = entry.getKey();
+            List<Transaction> groupedTransactions = entry.getValue();
+
+            Calendar calendar = Calendar.getInstance();
+
+            try {
+                calendar.setTime(Objects.requireNonNull(dateFormatter.parse(dateKey)));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Toast.makeText(context, ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+            TransactionDate transactionDate = new TransactionDate.Builder()
+                    .dayOfWeek(calendar.get(Calendar.DAY_OF_WEEK))
+                    .dayOfMonth(calendar.get(Calendar.DAY_OF_MONTH))
+                    .monthOfYear(calendar.get(Calendar.MONTH))
+                    .year(calendar.get(Calendar.YEAR))
+                    .transactions(groupedTransactions)
+                    .build();
+            groupedTransactionDates.add(transactionDate);
+        }
+
+        // step 4: Sort the list from latest to oldest date
+        groupedTransactionDates.sort((o1, o2) -> {
+            Calendar cal1 = Calendar.getInstance();
+            cal1.set(o1.getYear(), o1.getMonthOfYear(), o1.getDayOfMonth());
+
+            Calendar cal2 = Calendar.getInstance();
+            cal2.set(o2.getYear(), o2.getMonthOfYear(), o2.getDayOfMonth());
+
+            // Compare in reverse order for latest to oldest
+            return cal2.compareTo(cal1);
+
+        });
+
+        return groupedTransactionDates;
     }
 }

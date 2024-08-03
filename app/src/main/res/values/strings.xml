@@ -113,5 +113,8 @@
     <string name="_3_transactions">3 transactions</string>
     <string name="transaction_list">Transaction list</string>
     <string name="view_all">View all</string>
+    <string name="transfer">Transfer</string>
+    <string name="overview">Overview</string>
+    <string name="total_expense">Total Expense</string>
 
 </resources>

@@ -20,11 +20,11 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position) {
+//            case 1:
+//                return new CalendarTabFragment();
             case 1:
-                return new CalendarTabFragment();
-            case 2:
                 return new StatisticTabFragment();
-            case 3:
+            case 2:
                 return new WalletTabFragment();
             default:
                 return new TransactionTabFragment();
@@ -33,6 +33,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 4;// Number of tabs
+        return 3;// Number of tabs
     }
 }

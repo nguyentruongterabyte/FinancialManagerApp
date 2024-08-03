@@ -178,17 +178,17 @@ public class MainActivity extends BaseActivity {
                     tabIcon.setImageResource(R.drawable.ic_transaction);
                     tab.setContentDescription("Transaction Tab");
                     break;
-                case 1:
-                    tabText.setText("Calendar");
-                    tabIcon.setImageResource(R.drawable.ic_calendar);
-                    tab.setContentDescription("Calendar Tab");
-                    break;
-                case 2:
+                    //                case 1:
+                    //                    tabText.setText("Calendar");
+                    //                    tabIcon.setImageResource(R.drawable.ic_calendar);
+                    //                    tab.setContentDescription("Calendar Tab");
+                    //                    break;
+                case 1: // 2
                     tabText.setText("Statistic");
                     tabIcon.setImageResource(R.drawable.ic_statistic);
                     tab.setContentDescription("Statistic Tab");
                     break;
-                case 3:
+                case 2: // 3
                     tabText.setText("Wallet");
                     tabIcon.setImageResource(R.drawable.ic_wallet);
                     tab.setContentDescription("Wallet Tab");

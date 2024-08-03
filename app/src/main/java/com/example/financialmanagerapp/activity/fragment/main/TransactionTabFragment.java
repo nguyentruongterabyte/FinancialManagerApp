@@ -1,6 +1,5 @@
 package com.example.financialmanagerapp.activity.fragment.main;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +18,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.adapter.TransactionDateAdapter;
-import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.TransactionDate;
 import com.example.financialmanagerapp.model.User;
@@ -30,19 +27,12 @@ import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
 import com.example.financialmanagerapp.retrofit.RetrofitClient;
 import com.example.financialmanagerapp.utils.MoneyFormatter;
 import com.example.financialmanagerapp.utils.SharedPreferencesUtils;
-import com.example.financialmanagerapp.utils.TimerFormatter;
 import com.example.financialmanagerapp.utils.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -188,12 +178,12 @@ public class TransactionTabFragment extends Fragment {
         Utils.transactions.removeIf(Transaction::isFeeTransaction);
 
         // Add fee transactions
-        handleAddFeeTransactions(Utils.transactions);
+        Utils.addFeeTransactions(Utils.transactions);
 
         syncWalletsInTransactions(Utils.transactions);
 
-        transactionDates = groupTransactionsByDate(Utils.transactions);
-        TransactionDateAdapter adapter = new TransactionDateAdapter(requireContext(), transactionDates);
+        transactionDates = Utils.groupTransactionsByDate(requireContext(), Utils.transactions);
+        TransactionDateAdapter adapter = new TransactionDateAdapter(requireContext(), transactionDates, -1);
         listView.setAdapter(adapter);
 
         // find the position of the latest updated_at
@@ -223,38 +213,6 @@ public class TransactionTabFragment extends Fragment {
         }
     }
 
-    private void handleAddFeeTransactions(List<Transaction> transactions) {
-        List<Transaction> feeTransactions = new ArrayList<>();
-        for (Transaction transaction : transactions)
-            if (transaction.get_fee() > 0) {
-                Category category = new Category.Builder()
-                        .id(Utils.OTHER_CATEGORY_EXPENSE_TRANSACTION_ID)
-                        .name("Others")
-                        .icon(13)
-                        .color("#603C34")
-                        .transactionTypeId(Utils.EXPENSE_TRANSACTION_ID)
-                        .build();
-
-                Transaction feeTransaction = new Transaction.Builder()
-                        .category(category)
-                        .categoryId(category.getId())
-                        .date(transaction.get_date())
-                        .wallet(transaction.getWallet())
-                        .walletId(transaction.get_wallet_id())
-                        .toWallet(transaction.getTo_wallet())
-                        .toWalletId(transaction.get_to_wallet_id())
-                        .description("Fee")
-                        .amount(transaction.get_fee())
-                        .transactionTypeId(Utils.EXPENSE_TRANSACTION_ID)
-                        .updatedAt(transaction.getUpdated_at())
-                        .isFeeTransaction(true)
-                        .parent(transaction)
-                        .build();
-                feeTransactions.add(feeTransaction);
-            }
-        transactions.addAll(feeTransactions);
-    }
-
     private int findLastedTransactionPosition(List<TransactionDate> transactionDates) {
         Timestamp latestTimestamp = null;
         int latestPosition = -1;
@@ -270,71 +228,6 @@ public class TransactionTabFragment extends Fragment {
         }
         return latestPosition;
     }
-
-
-
-    private List<TransactionDate> groupTransactionsByDate(List<Transaction> transactions) {
-        // Step 1: Create a map to group transaction by date
-        Map<String, List<Transaction>> transactionsByDate = new HashMap<>();
-
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-
-        // Step 2: Iterate over transactions and group by date
-        for (Transaction transaction : transactions) {
-
-            Calendar calendar = TimerFormatter.getCalendar(transaction.get_date());
-            String dateKey = dateFormatter.format(calendar.getTime());
-
-            if (!transactionsByDate.containsKey(dateKey)) {
-                transactionsByDate.put(dateKey, new ArrayList<>());
-            }
-
-            Objects.requireNonNull(transactionsByDate.get(dateKey)).add(transaction);
-
-        }
-
-        // step 3: convert the map to a list of TransactionDate objects
-        List<TransactionDate> groupedTransactionDates = new ArrayList<>();
-        for (Map.Entry<String, List<Transaction>> entry : transactionsByDate.entrySet()) {
-            String dateKey = entry.getKey();
-            List<Transaction> groupedTransactions = entry.getValue();
-
-            Calendar calendar = Calendar.getInstance();
-
-            try {
-                calendar.setTime(Objects.requireNonNull(dateFormatter.parse(dateKey)));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                Toast.makeText(requireContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-
-            TransactionDate transactionDate = new TransactionDate.Builder()
-                    .dayOfWeek(calendar.get(Calendar.DAY_OF_WEEK))
-                    .dayOfMonth(calendar.get(Calendar.DAY_OF_MONTH))
-                    .monthOfYear(calendar.get(Calendar.MONTH))
-                    .year(calendar.get(Calendar.YEAR))
-                    .transactions(groupedTransactions)
-                    .build();
-            groupedTransactionDates.add(transactionDate);
-        }
-
-        // step 4: Sort the list from latest to oldest date
-        groupedTransactionDates.sort((o1, o2) -> {
-            Calendar cal1 = Calendar.getInstance();
-            cal1.set(o1.getYear(), o1.getMonthOfYear(), o1.getDayOfMonth());
-
-            Calendar cal2 = Calendar.getInstance();
-            cal2.set(o2.getYear(), o2.getMonthOfYear(), o2.getDayOfMonth());
-
-            // Compare in reverse order for latest to oldest
-            return cal2.compareTo(cal1);
-
-
-        });
-
-        return groupedTransactionDates;
-    }
-
 
     private void setBalance() {
         // set balance
