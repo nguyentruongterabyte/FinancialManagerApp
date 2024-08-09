@@ -1,13 +1,344 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    >
-    <TextView
-        android:layout_width="wrap_content"
+    tools:context=".activity.WalletDetailActivity">
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tab Statistic"
-        android:textSize="24sp"/>
-</LinearLayout>
+        android:background="@color/white"
+        android:elevation="10dp"
+        android:minHeight="@dimen/action_bar_size"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="@dimen/m_10"
+            android:background="@drawable/ripple_effect"
+            android:importantForAccessibility="no"
+            android:padding="@dimen/m_10"
+            android:src="@drawable/ic_chevron_left" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/august_2024"
+            android:textSize="@dimen/description_text_size" />
+
+        <ImageButton
+            android:id="@+id/btn_forward"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="@dimen/m_10"
+            android:background="@drawable/ripple_effect"
+            android:importantForAccessibility="no"
+            android:padding="@dimen/m_10"
+            android:src="@drawable/ic_chevron_right" />
+
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/action_bar_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!--     Section 1      -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m_20"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/m_10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/balance_"
+                    android:textSize="@dimen/description_text_size"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="@dimen/m_10"
+                            android:paddingBottom="@dimen/m_10"
+                            android:text="@string/opening_balance" />
+
+                        <TextView
+                            android:id="@+id/tv_opening_balance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="@dimen/m_10"
+                            android:paddingBottom="@dimen/m_10"
+                            android:text="@string/_200_000"
+                            android:fontFamily="@font/roboto_mono"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="@dimen/m_10"
+                            android:paddingBottom="@dimen/m_10"
+                            android:text="@string/ending_balance" />
+
+                        <TextView
+                            android:id="@+id/tv_ending_balance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="@dimen/m_10"
+                            android:paddingBottom="@dimen/m_10"
+                            android:text="@string/_200_000"
+                            android:fontFamily="@font/roboto_mono"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+            <!--     Section 2       -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m_20"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/m_10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/overview"
+                    android:textSize="@dimen/description_text_size"
+                    android:textStyle="bold" />
+                <!--        Income amount        -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/m_10"
+                        android:paddingBottom="@dimen/m_10"
+                        android:text="@string/income" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/tv_income_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/m_10"
+                        android:paddingBottom="@dimen/m_10"
+                        android:text="@string/_200_000"
+                        android:textColor="@color/primary"
+                        android:fontFamily="@font/roboto_mono"
+                        />
+                </LinearLayout>
+                <!--        Expense amount        -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/m_10"
+                        android:paddingBottom="@dimen/m_10"
+                        android:text="@string/expense" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/tv_expense_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/m_10"
+                        android:paddingBottom="@dimen/m_10"
+                        android:text="@string/_200_000"
+                        android:textColor="@color/color_6"
+                        android:fontFamily="@font/roboto_mono"
+                        />
+                </LinearLayout>
+                <!--        Total amount        -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/m_10"
+                        android:paddingBottom="@dimen/m_10"
+                        android:text="@string/total" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@id/tv_total_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/m_10"
+                        android:paddingBottom="@dimen/m_10"
+                        android:text="@string/_200_000"
+                        android:fontFamily="@font/roboto_mono"
+                        />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray" />
+                <!--        show more overview        -->
+                <LinearLayout
+                    android:id="@+id/show_more_overview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/m_10"
+                        android:paddingBottom="@dimen/m_10"
+                        android:text="@string/show_more" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="@dimen/m_20"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron_right" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <!--     Section 3       -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/m_20"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/m_10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/expense_struct"
+                    android:textSize="@dimen/description_text_size"
+                    android:textStyle="bold" />
+
+
+                <!--       Chart         -->
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pie_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_marginTop="20dp"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray" />
+                <!--        show more struct       -->
+                <LinearLayout
+                    android:id="@+id/show_more_structure"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ripple_effect"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="@dimen/m_10"
+                        android:paddingBottom="@dimen/m_10"
+                        android:text="@string/show_more" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="@dimen/m_20"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron_right" />
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

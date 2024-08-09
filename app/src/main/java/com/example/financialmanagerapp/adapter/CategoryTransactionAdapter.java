@@ -1,9 +1,9 @@
 package com.example.financialmanagerapp.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,18 +32,31 @@ public class CategoryTransactionAdapter extends BaseAdapter {
     protected List<String> categoryKeys;
     protected int[] icons;
     protected int walletId;
-    private double amount;
+    protected double amount;
+    protected double totalAmount;
+    protected boolean displayPercentage;
 
     private ImageView icon;
-    private TextView tvCategoryName, tvQuantity, tvAmount;
+    private TextView tvCategoryName, tvQuantity, tvAmount, tvPercentage;
 
-    public CategoryTransactionAdapter(Context context, List<Transaction> transactions, int walletId, int[] icons) {
+    public CategoryTransactionAdapter(Context context, List<Transaction> transactions, int walletId, int[] icons, boolean displayPercentage) {
         this.context = context;
         this.transactions = transactions;
         this.walletId = walletId;
         this.icons = icons;
         this.transactionsByCategory = Utils.groupTransactionsByCategoryName(transactions);
         this.categoryKeys = new ArrayList<>(transactionsByCategory.keySet());
+        this.totalAmount = handleCalculateTotalAmount(this.transactions);
+        this.displayPercentage = displayPercentage;
+    }
+
+    private double handleCalculateTotalAmount(List<Transaction> transactions) {
+        double totalSum = 0;
+
+        for (Transaction transaction : transactions)
+            totalSum += transaction.get_amount();
+
+        return totalSum;
     }
 
     @Override
@@ -178,7 +191,13 @@ public class CategoryTransactionAdapter extends BaseAdapter {
 
         tvCategoryName.setText(categoryName);
 
-
+        if (displayPercentage) {
+            double percentage = Math.abs(amount) / totalAmount * 100;
+            @SuppressLint("DefaultLocale")
+            String formattedPercentage = String.format("%.1f%%", percentage);
+            tvPercentage.setText(formattedPercentage);
+            tvPercentage.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setControl(View convertView) {
@@ -186,5 +205,6 @@ public class CategoryTransactionAdapter extends BaseAdapter {
         tvCategoryName = convertView.findViewById(R.id.tv_category_name);
         tvQuantity = convertView.findViewById(R.id.tv_quantity);
         tvAmount = convertView.findViewById(R.id.tv_amount);
+        tvPercentage = convertView.findViewById(R.id.tv_percentage);
     }
 }

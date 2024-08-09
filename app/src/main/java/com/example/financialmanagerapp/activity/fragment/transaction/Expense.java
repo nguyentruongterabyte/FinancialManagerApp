@@ -75,7 +75,10 @@ public class Expense extends Fragment {
 
         // handle text view category container clicked
         tvCategoryContainer.setOnClickListener(v -> {
-            SelectingCategoryFragment selectingCategoryFragment = new SelectingCategoryFragment(Utils.EXPENSE_TRANSACTION_ID);
+            if (Utils.categories.size() == 0)
+                return;
+
+            SelectingCategoryFragment selectingCategoryFragment = new SelectingCategoryFragment(Utils.EXPENSE_CATEGORY);
             selectingCategoryFragment.show(getParentFragmentManager(), selectingCategoryFragment.getTag());
         });
 

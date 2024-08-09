@@ -2,6 +2,7 @@ package com.example.financialmanagerapp.activity;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -22,7 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.financialmanagerapp.R;
-import com.example.financialmanagerapp.activity.fragment.account.AccountBottomSheetDialogFragment;
+import com.example.financialmanagerapp.activity.fragment.account.AccountDialog;
 import com.example.financialmanagerapp.adapter.ViewPagerAdapter;
 import com.example.financialmanagerapp.broadcast.CreatingRecordReceiver;
 import com.example.financialmanagerapp.broadcast.LogoutReceiver;
@@ -47,11 +48,11 @@ public class MainActivity extends BaseActivity {
     private boolean doubleBackToExitPressedOnce = false;
     protected LogoutReceiver logoutReceiver;
     protected CreatingRecordReceiver creatingRecordReceiver;
-    protected TextView tvName;
-    protected ImageButton btnSearch, btnTransactionList;
-    protected LinearLayout btnAccount;
+    private TextView tvName;
+    private ImageButton btnSearch, btnTransactionList;
+    private LinearLayout btnAccount;
     private TabLayout tabLayout;
-    protected ViewPager2 viewPager;
+    private ViewPager2 viewPager;
     protected ViewPagerAdapter viewPagerAdapter;
     protected FinancialManagerAPI apiService;
 
@@ -78,9 +79,23 @@ public class MainActivity extends BaseActivity {
 
     private void setEvents() {
 
+        // handle button search clicked
+        btnSearch.setOnClickListener(v -> {
+            Intent searchActivity = new Intent(this, SearchActivity.class);
+            startActivity(searchActivity);
+            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        });
+
+        // handle button transaction list clicked
+        btnTransactionList.setOnClickListener(v -> {
+            Intent overviewActivity = new Intent(this, OverviewActivity.class);
+            startActivity(overviewActivity);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
+
         // handle button account clicked
         btnAccount.setOnClickListener(v -> {
-            AccountBottomSheetDialogFragment accountBottomSheetDialogFragment = new AccountBottomSheetDialogFragment();
+            AccountDialog accountBottomSheetDialogFragment = new AccountDialog();
             accountBottomSheetDialogFragment.show(getSupportFragmentManager(), accountBottomSheetDialogFragment.getTag());
         });
 
@@ -130,6 +145,7 @@ public class MainActivity extends BaseActivity {
         tvName.setText("");
         if (Utils.currentUser != null) {
             tvName.setText(Utils.currentUser.get_name());
+            setViewPage();
         } else {
             Call<ResponseObject<User>> call = apiService.get(SharedPreferencesUtils.getUserId(this));
             call.enqueue(new Callback<ResponseObject<User>>() {
@@ -138,6 +154,7 @@ public class MainActivity extends BaseActivity {
                     if (response.isSuccessful() && response.body() != null && response.body().getStatus() == 200) {
                         Utils.currentUser = response.body().getResult();
                         tvName.setText(Utils.currentUser.get_name());
+                        setViewPage();
                     }
                 }
 
@@ -149,19 +166,8 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
-
     @SuppressLint("SetTextI18n")
-    private void setControl() {
-        tabLayout = findViewById(R.id.tab_layout);
-        viewPager = findViewById(R.id.view_pager);
-
-        btnSearch = findViewById(R.id.btn_search);
-        btnTransactionList = findViewById(R.id.btn_transaction_list);
-        btnAccount = findViewById(R.id.btn_account);
-
-        tvName = findViewById(R.id.tv_name);
-
+    private void setViewPage() {
         viewPagerAdapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(viewPagerAdapter);
 
@@ -178,11 +184,6 @@ public class MainActivity extends BaseActivity {
                     tabIcon.setImageResource(R.drawable.ic_transaction);
                     tab.setContentDescription("Transaction Tab");
                     break;
-                    //                case 1:
-                    //                    tabText.setText("Calendar");
-                    //                    tabIcon.setImageResource(R.drawable.ic_calendar);
-                    //                    tab.setContentDescription("Calendar Tab");
-                    //                    break;
                 case 1: // 2
                     tabText.setText("Statistic");
                     tabIcon.setImageResource(R.drawable.ic_statistic);
@@ -200,6 +201,21 @@ public class MainActivity extends BaseActivity {
         // Set the initial selected tab as active
         setActiveTab(Objects.requireNonNull(tabLayout.getTabAt(0)));
     }
+
+
+    @SuppressLint("SetTextI18n")
+    private void setControl() {
+        tabLayout = findViewById(R.id.tab_layout);
+        viewPager = findViewById(R.id.view_pager);
+
+        btnSearch = findViewById(R.id.btn_search);
+        btnTransactionList = findViewById(R.id.btn_transaction_list);
+        btnAccount = findViewById(R.id.btn_account);
+
+        tvName = findViewById(R.id.tv_name);
+    }
+
+
 
     private void setActiveTab(TabLayout.Tab tab) {
         View customView = tab.getCustomView();

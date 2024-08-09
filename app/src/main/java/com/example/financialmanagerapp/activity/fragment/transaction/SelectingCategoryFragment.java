@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +37,7 @@ public class SelectingCategoryFragment extends DialogFragment {
     protected int categoryType;
     private ImageButton btnBack;
     private ListView listView;
+    protected LinearLayout doneContainer;
 
     protected FinancialManagerAPI apiService;
     protected List<Category> categories = new ArrayList<>();
@@ -118,7 +121,11 @@ public class SelectingCategoryFragment extends DialogFragment {
                         if (response.body().getStatus() == 200) {
                             Utils.categories = response.body().getResult();
                             initCategories();
+                        } else {
+                            Toast.makeText(requireContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(requireContext(), response.message(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -136,12 +143,12 @@ public class SelectingCategoryFragment extends DialogFragment {
         categories.clear();
         switch (categoryType) {
 
-            case Utils.INCOME_TRANSACTION_ID:     // income
+            case Utils.INCOME_CATEGORY:     // income
                 for (Category category : Utils.categories)
                     if (category.get_transaction_type_id() == Utils.INCOME_TRANSACTION_ID)
                         categories.add(category);
                 break;
-            case Utils.EXPENSE_TRANSACTION_ID:     // expense
+            case Utils.EXPENSE_CATEGORY:     // expense
                 for (Category category : Utils.categories)
                     if (category.get_transaction_type_id() == Utils.EXPENSE_TRANSACTION_ID)
                         categories.add(category);
@@ -150,12 +157,16 @@ public class SelectingCategoryFragment extends DialogFragment {
                 break;
         }
 
-        CategoryAdapter adapter = new CategoryAdapter(requireContext(), categories, Utils.categoriesIcons);
+        CategoryAdapter adapter = new CategoryAdapter(requireContext(), categories, Utils.categoriesIcons, false, null);
         listView.setAdapter(adapter);
+
     }
 
     private void setControl(View view) {
         btnBack = view.findViewById(R.id.btn_back);
         listView = view.findViewById(R.id.list_view);
+
+        doneContainer = view.findViewById(R.id.done_container);
+        doneContainer.setVisibility(View.GONE);
     }
 }

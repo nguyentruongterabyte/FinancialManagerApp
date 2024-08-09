@@ -147,7 +147,7 @@ public class TransactionDateAdapter extends BaseAdapter {
         });
 
         // set transaction adapter to list view
-        TransactionAdapter adapter = new TransactionAdapter(context, transactions, Utils.categoriesIcons, walletId);
+        TransactionAdapter adapter = new TransactionAdapter(context, transactions, Utils.categoriesIcons, walletId, true);
 
         listView.setAdapter(adapter);
         Utils.setListViewHeightBasedOnItems(listView);

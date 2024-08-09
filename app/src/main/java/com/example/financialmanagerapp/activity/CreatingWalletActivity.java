@@ -44,7 +44,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class CreatingWalletActivity extends BaseActivity {
-    private Spinner spinner_type, spinner_color, spinner_icon;
+    private Spinner spinnerType, spinnerColor, spinnerIcon;
     private ImageButton btnBack;
     private TextView btnSave, tvAmount;
     private EditText edtName;
@@ -109,7 +109,7 @@ public class CreatingWalletActivity extends BaseActivity {
         });
 
         //
-        spinner_icon.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerIcon.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 wallet.set_icon(position);
@@ -123,7 +123,7 @@ public class CreatingWalletActivity extends BaseActivity {
         });
 
         // handle spinner types on item selected listener
-        spinner_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 WalletType walletType = (WalletType) parent.getItemAtPosition(position);
@@ -138,7 +138,7 @@ public class CreatingWalletActivity extends BaseActivity {
         });
 
         // handle spinner colors on item selected listener
-        spinner_color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // get the color resource ID from the adapter
@@ -150,7 +150,6 @@ public class CreatingWalletActivity extends BaseActivity {
                 // Convert the color int value to a hexadecimal string
                 String hexColor = String.format("#%06X", (0xFFFFFF & colorInt));
 
-                Log.d("myLog", "Selected color: " + hexColor);
                 wallet.set_color(hexColor);
 
             }
@@ -234,7 +233,7 @@ public class CreatingWalletActivity extends BaseActivity {
 
     private void initData() {
         wallet = new Wallet();
-
+        tvAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), 0.0));
         // get the view model
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
@@ -244,11 +243,11 @@ public class CreatingWalletActivity extends BaseActivity {
 
         // Set spinner color
         ColorAdapter colorAdapter = new ColorAdapter(this, Utils.colors);
-        spinner_color.setAdapter(colorAdapter);
+        spinnerColor.setAdapter(colorAdapter);
 
         // Set spinner icon
         IconAdapter iconAdapter = new IconAdapter(this, Utils.walletIcons);
-        spinner_icon.setAdapter(iconAdapter);
+        spinnerIcon.setAdapter(iconAdapter);
 
         // Get wallet types
         Call<ResponseObject<List<WalletType>>> call = apiService.getWalletTypes();
@@ -259,7 +258,7 @@ public class CreatingWalletActivity extends BaseActivity {
                     if (response.body().getStatus() == 200) {
                         List<WalletType> walletTypes = response.body().getResult();
                         WalletTypeAdapter adapter = new WalletTypeAdapter(CreatingWalletActivity.this, walletTypes);
-                        spinner_type.setAdapter(adapter);
+                        spinnerType.setAdapter(adapter);
 
                     } else {
                         Toast.makeText(CreatingWalletActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -285,10 +284,10 @@ public class CreatingWalletActivity extends BaseActivity {
         tvAmount = findViewById(R.id.tv_amount);
         tvAmountContainer = findViewById(R.id.tv_amount_container);
 
-        spinner_color = findViewById(R.id.spinner_color);
-        spinner_type = findViewById(R.id.spinner_type);
+        spinnerColor = findViewById(R.id.spinner_color);
+        spinnerType = findViewById(R.id.spinner_type);
 
-        spinner_icon = findViewById(R.id.spinner_icon);
+        spinnerIcon = findViewById(R.id.spinner_icon);
 
         swExclude = findViewById(R.id.sw_exclude);
     }

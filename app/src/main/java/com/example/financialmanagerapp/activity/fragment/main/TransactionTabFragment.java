@@ -20,13 +20,11 @@ import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.adapter.TransactionDateAdapter;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.TransactionDate;
-import com.example.financialmanagerapp.model.User;
 import com.example.financialmanagerapp.model.Wallet;
 import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
 import com.example.financialmanagerapp.retrofit.RetrofitClient;
 import com.example.financialmanagerapp.utils.MoneyFormatter;
-import com.example.financialmanagerapp.utils.SharedPreferencesUtils;
 import com.example.financialmanagerapp.utils.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -80,38 +78,14 @@ public class TransactionTabFragment extends Fragment {
     }
 
     private void initData() {
-
-        // Check if current user is null
-        if (Utils.currentUser == null) {
-            Call<ResponseObject<User>> call = apiService.get(SharedPreferencesUtils.getUserId(getContext()));
-            call.enqueue(new Callback<ResponseObject<User>>() {
-                @Override
-                public void onResponse(@NonNull Call<ResponseObject<User>> call, @NonNull Response<ResponseObject<User>> response) {
-                    if (response.isSuccessful() && response.body() != null && response.body().getStatus() == 200) {
-                        Utils.currentUser = response.body().getResult();
-                        setBalance();
-                        // get transactions
-                        getTransactions(1);
-                    }
-                }
-                @Override
-                public void onFailure(@NonNull Call<ResponseObject<User>> call, @NonNull Throwable t) {
-                    Log.e("API_ERROR", "API call failed: " + t.getMessage());
-                }
-            });
-        } else {
-            setBalance();
-            getTransactions(1);
-        }
-
+        setBalance();
+        getTransactions(1);
     }
 
     private void getTransactions(int page) {
         if (Utils.currentUser == null) return;
-
         if (isLoading) return;
         isLoading = true;
-
 
         if (Utils.transactions.size() == 0) {
             // set invisible list view

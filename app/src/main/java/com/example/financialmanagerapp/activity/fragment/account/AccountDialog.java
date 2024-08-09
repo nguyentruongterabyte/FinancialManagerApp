@@ -31,7 +31,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class AccountBottomSheetDialogFragment extends BottomSheetDialogFragment {
+public class AccountDialog extends BottomSheetDialogFragment {
     protected TextView tvName, tvBalance;
     protected FloatingActionButton btnSignOut;
     protected FinancialManagerAPI apiService;

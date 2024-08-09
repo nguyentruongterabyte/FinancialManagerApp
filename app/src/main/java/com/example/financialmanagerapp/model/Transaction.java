@@ -66,6 +66,10 @@ public class Transaction implements Serializable {
 
     }
 
+    public void setFeeTransaction(boolean feeTransaction) {
+        isFeeTransaction = feeTransaction;
+    }
+
     public void setUpdated_at(Timestamp updated_at) {
         this.updated_at = updated_at;
     }

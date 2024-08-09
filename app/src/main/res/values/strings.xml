@@ -63,7 +63,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="income">Income</string>
     <string name="save">SAVE</string>
-    <string name="transaction">transaction</string>
+    <string name="transaction">Transaction</string>
     <string name="date">Date</string>
     <string name="_07_18_2024">07/18/2024</string>
     <string name="_9_54_am">9:54 AM</string>
@@ -116,5 +116,30 @@
     <string name="transfer">Transfer</string>
     <string name="overview">Overview</string>
     <string name="total_expense">Total Expense</string>
+    <string name="expense_struct">Expense Struct</string>
+    <string name="august_2024">August 2024</string>
+    <string name="balance_">Balance</string>
+    <string name="opening_balance">Opening balance</string>
+    <string name="ending_balance">Ending balance</string>
+    <string name="total">Total</string>
+    <string name="show_more">Show more</string>
+    <string name="structure">Structure</string>
+    <string name="percent_0">0%</string>
+    <string name="try_to_search_something">Try to search something</string>
+    <string name="_1_transaction_found">1 transaction found</string>
+    <string name="select_date">Select date</string>
+    <string name="start">Start</string>
+    <string name="_08_01_2024">08/01/2024</string>
+    <string name="end">End</string>
+    <string name="cancel">cancel</string>
+    <string name="done">done</string>
+    <string name="aug_1_aug_31">Aug 1 - Aug 31</string>
+    <string name="_1_category">1 Category</string>
+    <string name="budget">Budget</string>
+    <string name="add_budget">Add Budget</string>
+    <string name="budget_s_name">Budget\'s name</string>
+    <string name="period">Period</string>
+    <string name="september_spending">September spending</string>
+    <string name="remain_29_998_974">Remain $29,998,974</string>
 
 </resources>

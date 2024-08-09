@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -25,7 +26,7 @@ import retrofit2.Retrofit;
 public class SelectingWalletFragment extends DialogFragment {
     private ImageButton btnBack;
     private ListView listView;
-
+    protected LinearLayout doneContainer;
     protected FinancialManagerAPI apiService;
     protected SharedViewModel sharedViewModel;
     protected int walletType;
@@ -36,7 +37,10 @@ public class SelectingWalletFragment extends DialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_selecting_wallet, container, false);
         setControl(view);
         initData();
@@ -48,7 +52,9 @@ public class SelectingWalletFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         // Make the dialog full screen
         if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            getDialog().getWindow().setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
             getDialog().getWindow().setWindowAnimations(R.style.DialogAnimation);
         }
     }
@@ -104,12 +110,16 @@ public class SelectingWalletFragment extends DialogFragment {
     }
 
     private void initWallets() {
-        WalletAdapter adapter = new WalletAdapter(requireContext(), Utils.currentUser.getWallets(), Utils.walletIcons);
+        WalletAdapter adapter = new WalletAdapter(requireContext(), Utils.currentUser.getWallets(),
+                Utils.walletIcons, false, null);
         listView.setAdapter(adapter);
     }
 
     private void setControl(View view) {
         btnBack = view.findViewById(R.id.btn_back);
         listView = view.findViewById(R.id.list_view);
+
+        doneContainer = view.findViewById(R.id.done_container);
+        doneContainer.setVisibility(View.GONE);
     }
 }

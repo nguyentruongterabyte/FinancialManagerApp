@@ -13,8 +13,13 @@ public class User implements Serializable {
     protected String _password_confirmation;
     protected Currency currency;
     protected List<Wallet> wallets;
+    protected List<Budget> budgets;
 
     public User() {
+    }
+
+    public List<Budget> getBudgets() {
+        return budgets;
     }
 
     public int getId() {

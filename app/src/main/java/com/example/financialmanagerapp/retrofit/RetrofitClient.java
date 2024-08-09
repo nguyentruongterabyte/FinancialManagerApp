@@ -99,14 +99,13 @@ public class RetrofitClient {
         if (response.isSuccessful() && response.body() != null) {
             return response.body();
         } else {
-            if (response.code() == 403) {
-                // Clear storage
-                SharedPreferencesUtils.clearSharedPreferences(context);
 
-                // return to Login Activity
-                Intent logoutIntent = new Intent("com.example.financialManagerApp.LOGOUT");
-                context.sendBroadcast(logoutIntent);
-            }
+            // Clear storage
+            SharedPreferencesUtils.clearSharedPreferences(context);
+
+            // return to Login Activity
+            Intent logoutIntent = new Intent("com.example.financialManagerApp.LOGOUT");
+            context.sendBroadcast(logoutIntent);
 
             throw new IOException("Failed to refresh token: " + response.message());
         }

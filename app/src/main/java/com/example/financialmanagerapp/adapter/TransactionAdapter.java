@@ -27,12 +27,14 @@ public class TransactionAdapter extends BaseAdapter {
     protected List<Transaction> transactions;
     protected int[] icons;
     protected int walletId;
+    protected boolean displayTime;
 
-    public TransactionAdapter(Context context, List<Transaction> transactions, int[] icons, int walletId) {
+    public TransactionAdapter(Context context, List<Transaction> transactions, int[] icons, int walletId, boolean displayTime) {
         this.context = context;
         this.transactions = transactions;
         this.icons = icons;
         this.walletId = walletId;
+        this.displayTime = displayTime;
     }
 
     @Override
@@ -122,9 +124,16 @@ public class TransactionAdapter extends BaseAdapter {
 
         // set text view time
         Calendar calendar = TimerFormatter.getCalendar(transaction.get_date());
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        tvTime.setText(TimerFormatter.convertTimeString(hour, minute));
+        if (displayTime) {
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            tvTime.setText(TimerFormatter.convertTimeString(hour, minute));
+        } else {
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            tvTime.setText(TimerFormatter.convertDateString(year, month + 1, day));
+        }
         return convertView;
     }
 }

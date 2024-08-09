@@ -7,11 +7,18 @@
     android:padding="16dp"
     tools:ignore="UseCompoundDrawables">
 
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
     <ImageView
         android:id="@+id/wallet_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:padding="8sp"
+        android:padding="8dp"
         android:src="@drawable/ic_money_bill"
         android:layout_marginEnd="16dp"
         android:importantForAccessibility="no"

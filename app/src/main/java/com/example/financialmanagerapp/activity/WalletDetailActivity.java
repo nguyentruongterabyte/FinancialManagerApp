@@ -83,7 +83,7 @@ public class WalletDetailActivity extends BaseActivity {
 
             // set transactions by category for list view
             CategoryTransactionAdapter adapter = new CategoryTransactionAdapter(
-                    this, wallet.getTransactions(), wallet.getId(), Utils.categoriesIcons);
+                    this, wallet.getTransactions(), wallet.getId(), Utils.categoriesIcons, false);
             listView.setAdapter(adapter);
             Utils.setListViewHeightBasedOnItems(listView);
         }

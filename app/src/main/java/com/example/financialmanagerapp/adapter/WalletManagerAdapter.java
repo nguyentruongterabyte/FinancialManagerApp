@@ -1,19 +1,15 @@
 package com.example.financialmanagerapp.adapter;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
 
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.activity.CreatingWalletActivity;
@@ -80,6 +76,8 @@ public class WalletManagerAdapter extends BaseAdapter {
              ImageView iconView = convertView.findViewById(R.id.wallet_icon);
              TextView nameView = convertView.findViewById(R.id.wallet_name);
              TextView balanceView = convertView.findViewById(R.id.wallet_balance);
+             CheckBox checkBox = convertView.findViewById(R.id.checkbox);
+             checkBox.setVisibility(View.GONE);
 
              Wallet wallet = wallets.get(position);
              iconView.setImageResource(icons[wallet.get_icon()]);

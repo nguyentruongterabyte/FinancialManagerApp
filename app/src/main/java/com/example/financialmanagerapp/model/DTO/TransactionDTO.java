@@ -26,10 +26,6 @@ public class TransactionDTO {
     @SerializedName("_date")
     protected Timestamp _date;
 
-    public Double get_amount() {
-        return _amount;
-    }
-
     public void set_amount(Double _amount) {
         this._amount = _amount;
     }

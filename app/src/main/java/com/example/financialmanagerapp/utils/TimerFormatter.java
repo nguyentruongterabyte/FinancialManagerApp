@@ -15,6 +15,10 @@ public class TimerFormatter {
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     };
 
+    protected final static String[] fullMonthOfYearText = {
+            "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+    };
+
     @SuppressLint("DefaultLocale")
     public static String convertDateString(int year, int month, int day) {
         if (month < 1) month = 1;
@@ -42,7 +46,7 @@ public class TimerFormatter {
     }
 
     @SuppressLint("DefaultLocale")
-    private static String formatNumber(int num) {
+    public static String formatNumber(int num) {
 
         return String.format("%02d", num);
     }
@@ -65,5 +69,9 @@ public class TimerFormatter {
 
     public static String getMonthOfYearText(int monthOfYear) {
         return monthOfYearText[monthOfYear];
+    }
+
+    public static String getFullMonthOfYearText(int monthOfYear) {
+        return fullMonthOfYearText[monthOfYear];
     }
 }

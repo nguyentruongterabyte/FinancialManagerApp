@@ -1,7 +1,9 @@
 package com.example.financialmanagerapp.retrofit;
 
+import com.example.financialmanagerapp.model.Budget;
 import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.Currency;
+import com.example.financialmanagerapp.model.DTO.BudgetDTO;
 import com.example.financialmanagerapp.model.DTO.EmailCheckerDTO;
 import com.example.financialmanagerapp.model.DTO.LoginDTO;
 import com.example.financialmanagerapp.model.DTO.RefreshTokenDTO;
@@ -97,4 +99,7 @@ public interface FinancialManagerAPI {
             @Path("id") int userId,
             @Path("transactionId") int transactionId
     );
+    // Budget
+    @POST("api/budget")
+    Call<ResponseObject<Budget>> createBudget(@Body BudgetDTO request);
 }

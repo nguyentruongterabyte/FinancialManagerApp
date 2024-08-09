@@ -70,4 +70,9 @@ dependencies {
     // View model and Live data
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
 
+    // MP android chart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    // gson
+    implementation("com.google.code.gson:gson:2.10.1")
 }

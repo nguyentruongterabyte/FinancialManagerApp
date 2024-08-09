@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,12 +12,17 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.financialmanagerapp.R;
+import com.example.financialmanagerapp.activity.TransactionDetailActivity;
 import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.Currency;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.TransactionDate;
 import com.example.financialmanagerapp.model.User;
+import com.example.financialmanagerapp.model.Wallet;
+import com.example.financialmanagerapp.model.response.ResponseObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,13 +33,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Utils {
     // Base URL
-    public static final String BASE_URL = "http://192.168.1.9:6789/";
+    public static final String BASE_URL = "http://financial-manager.ddnsking.com:6789/";
 
     // Currencies
     public static List<Currency> currencies = new ArrayList<>();
     public static List<Transaction> transactions = new ArrayList<>();
+    // Categories
+    public static List<Category> categories = new ArrayList<>();
 
     // Current user
     public static User currentUser = null;
@@ -69,8 +81,7 @@ public class Utils {
             R.color.color_23, R.color.color_24
     };
 
-    // Categories
-    public static List<Category> categories = new ArrayList<>();
+
 
     // Transaction Type
     public static final int INCOME_TRANSACTION_ID = 1;
@@ -85,6 +96,17 @@ public class Utils {
     // wallet type
     public static final int TO_WALLET_TYPE = 1;
     public static final int FROM_WALLET_TYPE = 2;
+
+    // search type
+    public static final int SEARCH_BY_KEY = 0;
+    public static final int SEARCH_BY_DATE = 1;
+    public static final int SEARCH_BY_CATEGORIES = 2;
+    public static final int SEARCH_BY_WALLETS = 3;
+
+    // category type
+    public static final int ALL_CATEGORY = 0;
+    public static final int EXPENSE_CATEGORY = 1;
+    public static final int INCOME_CATEGORY = 2;
 
     // Amount type
     public static final String ENTERING_AMOUNT = "entering_amount";
@@ -128,8 +150,8 @@ public class Utils {
 
         for (Transaction transaction : transactions) {
             // Transfer transactions
-            if (transaction.get_transaction_type_id() == Utils.TRANSFER_TRANSACTION_ID) {
-                if (!transactionsByCategory.containsKey("Transfer")) {
+            if (transaction.get_transaction_type_id() == TRANSFER_TRANSACTION_ID) {
+                if (!transactionsByCategory.containsKey("   Transfer")) {
                     transactionsByCategory.put("Transfer", new ArrayList<>());
                 }
 
@@ -152,11 +174,11 @@ public class Utils {
         for (Transaction transaction : transactions)
             if (transaction.get_fee() > 0) {
                 Category category = new Category.Builder()
-                        .id(Utils.OTHER_CATEGORY_EXPENSE_TRANSACTION_ID)
+                        .id(OTHER_CATEGORY_EXPENSE_TRANSACTION_ID)
                         .name("Others")
                         .icon(13)
                         .color("#603C34")
-                        .transactionTypeId(Utils.EXPENSE_TRANSACTION_ID)
+                        .transactionTypeId(EXPENSE_TRANSACTION_ID)
                         .build();
 
                 Transaction feeTransaction = new Transaction.Builder()
@@ -169,7 +191,7 @@ public class Utils {
                         .toWalletId(transaction.get_to_wallet_id())
                         .description("Fee")
                         .amount(transaction.get_fee())
-                        .transactionTypeId(Utils.EXPENSE_TRANSACTION_ID)
+                        .transactionTypeId(EXPENSE_TRANSACTION_ID)
                         .updatedAt(transaction.getUpdated_at())
                         .isFeeTransaction(true)
                         .parent(transaction)
@@ -239,5 +261,55 @@ public class Utils {
         });
 
         return groupedTransactionDates;
+    }
+
+    public static List<Transaction> groupTransactionsByMonthOfYear(List<Transaction> transactionList,int year, int month) {
+        List<Transaction> transactionsByMonthOfYear = new ArrayList<>();
+        for (Transaction transaction : transactionList) {
+            Calendar calendar = TimerFormatter.getCalendar(transaction.get_date());
+            int transactionMonth = calendar.get(Calendar.MONTH);
+            int transactionYear = calendar.get(Calendar.YEAR);
+            if (transactionMonth == month && transactionYear == year)
+                transactionsByMonthOfYear.add(transaction);
+        }
+        return transactionsByMonthOfYear;
+    }
+
+    public static List<Transaction> filterTransactionsByType(List<Transaction> transactions, int type) {
+        List<Transaction> result = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            if (transaction.get_transaction_type_id() == type) {
+                result.add(transaction);
+            }
+        }
+        return result;
+    }
+
+    public static List<Transaction> getAllTransactionsFromWallets() {
+        List<Transaction> transactionList = new ArrayList<>();
+        // get wallets from current user
+        List<Wallet> wallets = currentUser.getWallets();
+
+        // for loop wallet and push transaction
+        for (Wallet wallet : wallets)
+            // add transactions in each wallet
+            transactionList.addAll(wallet.getTransactions());
+
+
+        // add fee transactions
+        addFeeTransactions(transactionList);
+
+        // remove fee transaction where from wallet not current wallet
+        for (Wallet wallet : wallets)
+            if (wallet.get_exclude() == 0)
+                for (int i = transactionList.size() - 1; i >= 0; i--) {
+                    Transaction transaction = transactionList.get(i);
+                    if (transaction.isFeeTransaction()
+                            && transaction.getParent().get_from_wallet_id() != wallet.getId())
+                        transactionList.remove(i);
+                }
+
+
+        return transactionList;
     }
 }

@@ -17,6 +17,18 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activity.CreatingBudgetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.OverviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.StructureActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.CategoryTransactionDetailActivity"
             android:exported="false" />
         <activity

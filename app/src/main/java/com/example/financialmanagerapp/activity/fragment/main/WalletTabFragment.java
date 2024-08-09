@@ -4,10 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,25 +16,28 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.financialmanagerapp.R;
+import com.example.financialmanagerapp.activity.CreatingBudgetActivity;
 import com.example.financialmanagerapp.activity.WalletDetailActivity;
+import com.example.financialmanagerapp.adapter.BudgetAdapter;
 import com.example.financialmanagerapp.adapter.WalletManagerAdapter;
-import com.example.financialmanagerapp.model.User;
+import com.example.financialmanagerapp.model.Budget;
+import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.Wallet;
-import com.example.financialmanagerapp.model.response.ResponseObject;
 import com.example.financialmanagerapp.retrofit.FinancialManagerAPI;
 import com.example.financialmanagerapp.retrofit.RetrofitClient;
-import com.example.financialmanagerapp.utils.SharedPreferencesUtils;
 import com.example.financialmanagerapp.utils.Utils;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.List;
+
 import retrofit2.Retrofit;
 
 public class WalletTabFragment extends Fragment {
 
     private ListView listView;
+    private ListView listViewBudget;
     private TextView tvManager;
+    private LinearLayout btnAddBudget;
+
     protected FinancialManagerAPI apiService;
 
     public WalletTabFragment() {
@@ -72,41 +75,39 @@ public class WalletTabFragment extends Fragment {
                 ((Activity) requireContext()).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
+
+        // handle button add budget clicked
+        btnAddBudget.setOnClickListener(v -> {
+            Intent creatingBudgetActivity = new Intent(requireContext(), CreatingBudgetActivity.class);
+            if (requireContext() instanceof Activity) {
+                requireContext().startActivity(creatingBudgetActivity);
+                ((Activity) requireContext()).overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+            }
+        });
     }
 
     @SuppressLint("DefaultLocale")
     private void initData() {
-        // Check if current user is null
-        if (Utils.currentUser == null) {
-            Call<ResponseObject<User>> call = apiService.get(SharedPreferencesUtils.getUserId(getContext()));
-            call.enqueue(new Callback<ResponseObject<User>>() {
-                @Override
-                public void onResponse(@NonNull Call<ResponseObject<User>> call, @NonNull Response<ResponseObject<User>> response) {
-                    if (response.isSuccessful() && response.body() != null && response.body().getStatus() == 200) {
-                        Utils.currentUser = response.body().getResult();
-                        WalletManagerAdapter adapter = new WalletManagerAdapter(requireContext(), Utils.currentUser.getWallets(), Utils.walletIcons);
-                        listView.setAdapter(adapter);
-                        tvManager.setText(String.format("Manager(%d)", Utils.currentUser.getWallets().size()));
-                    }
-                }
+        WalletManagerAdapter adapter = new WalletManagerAdapter(requireContext(), Utils.currentUser.getWallets(), Utils.walletIcons);
+        listView.setAdapter(adapter);
+        Utils.setListViewHeightBasedOnItems(listView);
+        tvManager.setText(String.format("Manager(%d)", Utils.currentUser.getWallets().size()));
 
-                @Override
-                public void onFailure(@NonNull Call<ResponseObject<User>> call, @NonNull Throwable t) {
-                    Log.e("API_ERROR", "API call failed: " + t.getMessage());
-                }
-            });
-        } else {
-            WalletManagerAdapter adapter = new WalletManagerAdapter(requireContext(), Utils.currentUser.getWallets(), Utils.walletIcons);
-            listView.setAdapter(adapter);
+        List<Budget> budgets = Utils.currentUser.getBudgets();
+        List<Transaction> transactions = Utils.getAllTransactionsFromWallets();
+        BudgetAdapter budgetAdapter = new BudgetAdapter(requireContext(), budgets, transactions);
+        listViewBudget.setAdapter(budgetAdapter);
+        Utils.setListViewHeightBasedOnItems(listViewBudget);
 
-            tvManager.setText(String.format("Manager(%d)", Utils.currentUser.getWallets().size()));
-        }
     }
 
     private void setControl(View view) {
         listView = view.findViewById(R.id.list_view);
+        listViewBudget = view.findViewById(R.id.list_view_budget);
 
         tvManager = view.findViewById(R.id.tv_manager);
+
+        btnAddBudget = view.findViewById(R.id.btn_add_budget);
 
         // Initialize RetrofitClient
         Retrofit retrofit = RetrofitClient.getInstance(Utils.BASE_URL, getContext());

@@ -75,7 +75,9 @@ public class Income extends Fragment {
 
         // handle text view category container clicked
         tvCategoryContainer.setOnClickListener(v -> {
-            SelectingCategoryFragment selectingCategoryFragment = new SelectingCategoryFragment(Utils.INCOME_TRANSACTION_ID);
+            if (Utils.categories.size() == 0)
+                return;
+            SelectingCategoryFragment selectingCategoryFragment = new SelectingCategoryFragment(Utils.INCOME_CATEGORY);
             selectingCategoryFragment.show(getParentFragmentManager(), selectingCategoryFragment.getTag());
         });
 
