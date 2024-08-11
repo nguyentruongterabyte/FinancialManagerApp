@@ -79,6 +79,7 @@ public class WalletManagerAdapter extends BaseAdapter {
              CheckBox checkBox = convertView.findViewById(R.id.checkbox);
              checkBox.setVisibility(View.GONE);
 
+
              Wallet wallet = wallets.get(position);
              iconView.setImageResource(icons[wallet.get_icon()]);
              nameView.setText(wallet.get_name());

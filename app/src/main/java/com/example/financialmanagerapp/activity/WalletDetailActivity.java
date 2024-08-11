@@ -1,5 +1,6 @@
 package com.example.financialmanagerapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -37,6 +38,29 @@ public class WalletDetailActivity extends BaseActivity {
     }
 
     private void setEvents() {
+        // handle button edit wallet clicked
+        btnEdit.setOnClickListener(v -> {
+            Intent editingWalletActivity = new Intent(WalletDetailActivity.this, CreatingWalletActivity.class);
+            editingWalletActivity.putExtra("wallet", wallet);
+            startActivity(editingWalletActivity);
+            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        });
+
+        // handle button statistic wallet clicked
+        btnStatistic.setOnClickListener(v -> {
+            Intent walletStatisticActivity = new Intent(WalletDetailActivity.this, WalletStatisticActivity.class);
+            walletStatisticActivity.putExtra("wallet", wallet);
+            startActivity(walletStatisticActivity);
+        });
+
+        // handle button view all wallet transaction
+        btnViewAll.setOnClickListener(v -> {
+            Intent overviewActivity = new Intent(this, OverviewActivity.class);
+            overviewActivity.putExtra("walletId", wallet.getId());
+            startActivity(overviewActivity);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
+
         // Handle button back clicked
         btnBack.setOnClickListener(v -> {
             finish();

@@ -17,6 +17,7 @@ import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.adapter.CategoryTransactionAdapter;
 import com.example.financialmanagerapp.model.SharedViewModel;
 import com.example.financialmanagerapp.model.Transaction;
+import com.example.financialmanagerapp.model.Wallet;
 import com.example.financialmanagerapp.utils.MoneyFormatter;
 import com.example.financialmanagerapp.utils.Utils;
 import com.github.mikephil.charting.charts.PieChart;
@@ -44,9 +45,10 @@ public class Expense extends Fragment {
     protected int month;
     protected List<String> xData;
     protected double expenseAmount;
+    protected int walletId;
 
-    public Expense() {
-
+    public Expense(int walletId) {
+        this.walletId = walletId;
     }
 
     @Override
@@ -131,7 +133,19 @@ public class Expense extends Fragment {
 
     private void initData() {
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        transactions = Utils.getAllTransactionsFromWallets();
+
+        if (walletId != -1) {
+            for (Wallet wallet : Utils.currentUser.getWallets()) {
+                if (wallet.getId() == walletId) {
+                    transactions = wallet.getTransactions();
+                    Utils.addFeeTransactions(transactions);
+                    break;
+                }
+            }
+        } else {
+            transactions = Utils.getAllTransactionsFromWallets();
+        }
+
         transactions = Utils.filterTransactionsByType(transactions, Utils.EXPENSE_TRANSACTION_ID);
         // handle calculate expense amount;
         handleCalculateExpenseAmount();

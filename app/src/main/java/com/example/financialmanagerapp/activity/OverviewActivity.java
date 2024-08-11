@@ -15,10 +15,12 @@ import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.adapter.TransactionDateAdapter;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.TransactionDate;
+import com.example.financialmanagerapp.model.Wallet;
 import com.example.financialmanagerapp.utils.MoneyFormatter;
 import com.example.financialmanagerapp.utils.TimerFormatter;
 import com.example.financialmanagerapp.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class OverviewActivity extends BaseActivity {
     protected List<Transaction> transactions;
     protected double incomeAmount;
     protected double expenseAmount;
+    protected int walletId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,13 +105,27 @@ public class OverviewActivity extends BaseActivity {
     }
     @SuppressLint("DefaultLocale")
     private void initData() {
+
+        walletId = getIntent().getIntExtra("walletId", -1);
+
         Calendar calendar = Calendar.getInstance();
         year = getIntent().getIntExtra("year", calendar.get(Calendar.YEAR));
         month = getIntent().getIntExtra("month", calendar.get(Calendar.MONTH));
 
         tvDate.setText(String.format("%s %d", TimerFormatter.getFullMonthOfYearText(month), year));
 
-        transactions = Utils.getAllTransactionsFromWallets();
+        if (walletId != -1) {
+            for (Wallet wallet : Utils.currentUser.getWallets()) {
+                if (wallet.getId() == walletId) {
+                    transactions = wallet.getTransactions();
+                    Utils.addFeeTransactions(transactions);
+                    break;
+                }
+            }
+        } else {
+            transactions = Utils.getAllTransactionsFromWallets();
+        }
+
         List<Transaction> transactionsByMonthOfYear = Utils.groupTransactionsByMonthOfYear(transactions, year, month);
 
         // handle calculate income, expense, total amounts
@@ -139,11 +156,18 @@ public class OverviewActivity extends BaseActivity {
             noRecord.setVisibility(View.GONE);
         }
 
+
+
         for (Transaction transaction : transactionList) {
             if (transaction.get_transaction_type_id() == Utils.INCOME_TRANSACTION_ID)
                 incomeAmount += transaction.get_amount();
-            if (transaction.get_transaction_type_id() == Utils.EXPENSE_TRANSACTION_ID)
+            else if (transaction.get_transaction_type_id() == Utils.EXPENSE_TRANSACTION_ID)
                 expenseAmount -= transaction.get_amount();
+            else
+                if (transaction.get_from_wallet_id() == walletId)
+                    expenseAmount -= transaction.get_amount();
+                else
+                    incomeAmount += transaction.get_amount();
 
         }
 

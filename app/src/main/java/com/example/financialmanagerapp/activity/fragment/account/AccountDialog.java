@@ -73,22 +73,30 @@ public class AccountDialog extends BottomSheetDialogFragment {
         call.enqueue(new Callback<ResponseObject<Void>>() {
             @Override
             public void onResponse(@NonNull Call<ResponseObject<Void>> call, @NonNull Response<ResponseObject<Void>> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getStatus() == 200) {
-                    // clear current user
-                    Utils.currentUser = null;
 
-                    // clear storage
-                    SharedPreferencesUtils.clearSharedPreferences(getContext());
+                // clear current user
+                Utils.currentUser = null;
 
-                    // return to Login Activity
-                    Intent logoutIntent = new Intent("com.example.financialManagerApp.LOGOUT");
-                    requireContext().sendBroadcast(logoutIntent);
-                }
+                // clear storage
+                SharedPreferencesUtils.clearSharedPreferences(getContext());
+
+                // return to Login Activity
+                Intent logoutIntent = new Intent("com.example.financialManagerApp.LOGOUT");
+                requireContext().sendBroadcast(logoutIntent);
+
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseObject<Void>> call, @NonNull Throwable t) {
+                // clear current user
+                Utils.currentUser = null;
 
+                // clear storage
+                SharedPreferencesUtils.clearSharedPreferences(getContext());
+
+                // return to Login Activity
+                Intent logoutIntent = new Intent("com.example.financialManagerApp.LOGOUT");
+                requireContext().sendBroadcast(logoutIntent);
             }
         });
 

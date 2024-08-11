@@ -48,5 +48,13 @@
             android:fontFamily="@font/roboto_mono"
             />
     </LinearLayout>
-
+    <ImageButton
+        android:id="@+id/btn_delete"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_trash"
+        android:layout_gravity="center_vertical"
+        android:importantForAccessibility="no"
+        android:visibility="gone"
+        />
 </LinearLayout>

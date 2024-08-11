@@ -9,8 +9,10 @@ import com.example.financialmanagerapp.activity.fragment.structure.Expense;
 import com.example.financialmanagerapp.activity.fragment.structure.Income;
 
 public class StructureViewPagerAdapter extends FragmentStateAdapter {
-    public StructureViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+    protected int walletId;
+    public StructureViewPagerAdapter(@NonNull FragmentActivity fragmentActivity, int walletId) {
         super(fragmentActivity);
+        this.walletId = walletId;
     }
 
 
@@ -18,9 +20,9 @@ public class StructureViewPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         if (position == 1) {
-            return new Expense();
+            return new Expense(walletId);
         }
-        return new Income();
+        return new Income(walletId);
     }
 
     @Override

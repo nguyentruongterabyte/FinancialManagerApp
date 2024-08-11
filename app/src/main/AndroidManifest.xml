@@ -17,6 +17,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activity.WalletManagerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.WalletStatisticActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.BudgetDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.CreatingBudgetActivity"
             android:exported="false" />
         <activity

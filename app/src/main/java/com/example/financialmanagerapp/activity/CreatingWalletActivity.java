@@ -48,7 +48,7 @@ public class CreatingWalletActivity extends BaseActivity {
     private ImageButton btnBack;
     private TextView btnSave, tvAmount;
     private EditText edtName;
-    private LinearLayout tvAmountContainer;
+    private LinearLayout tvAmountContainer, spinnerTypeContainer;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch swExclude;
 
@@ -56,6 +56,15 @@ public class CreatingWalletActivity extends BaseActivity {
 
     protected FinancialManagerAPI apiService;
     private SharedViewModel sharedViewModel;
+    private double diffAmount;
+
+    private enum Type {
+        EDIT, CREATE
+    }
+
+    private Type currentType = Type.CREATE;
+
+    protected int walletId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +112,7 @@ public class CreatingWalletActivity extends BaseActivity {
 
         // handle text view amount container clicked
         tvAmountContainer.setOnClickListener(v -> {
-            sharedViewModel.setAmount(0);
+            sharedViewModel.setAmount(currentType == Type.EDIT ? wallet.get_initial_amount() : 0);
             EnteringAmountFragment enteringAmountFragment = new EnteringAmountFragment(Utils.ENTERING_AMOUNT);
             enteringAmountFragment.show(getSupportFragmentManager(), enteringAmountFragment.getTag());
         });
@@ -113,7 +122,6 @@ public class CreatingWalletActivity extends BaseActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 wallet.set_icon(position);
-                Log.d("myLog", String.valueOf(position));
             }
 
             @Override
@@ -187,7 +195,17 @@ public class CreatingWalletActivity extends BaseActivity {
     }
 
     private void handleSaveWallet() {
-        Call<ResponseObject<Wallet>> call = apiService.createWallet(WalletMapper.toWalletDTO(wallet));
+        Call<ResponseObject<Wallet>> call = null;
+        switch (currentType) {
+            case CREATE:
+                call = apiService.createWallet(WalletMapper.toWalletDTO(wallet));
+                break;
+            case EDIT:
+                wallet.set_amount(wallet.get_initial_amount() - diffAmount);
+                call = apiService.updateWallet(WalletMapper.toWalletDTO(wallet), Utils.currentUser.getId(), walletId);
+                break;
+        }
+
 
         call.enqueue(new Callback<ResponseObject<Wallet>>() {
             @Override
@@ -196,7 +214,9 @@ public class CreatingWalletActivity extends BaseActivity {
                     if (response.body().getStatus() == 201) {
                         wallet = response.body().getResult();
                         Utils.currentUser.getWallets().add(wallet);
-
+                        finish();
+                    } else if (response.body().getStatus() == 200) {
+                        Wallet.updateWalletInList(wallet, Utils.currentUser.getWallets());
                         finish();
                     } else {
                         Toast.makeText(CreatingWalletActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -232,8 +252,6 @@ public class CreatingWalletActivity extends BaseActivity {
     }
 
     private void initData() {
-        wallet = new Wallet();
-        tvAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), 0.0));
         // get the view model
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
@@ -249,6 +267,48 @@ public class CreatingWalletActivity extends BaseActivity {
         IconAdapter iconAdapter = new IconAdapter(this, Utils.walletIcons);
         spinnerIcon.setAdapter(iconAdapter);
 
+
+        wallet = new Wallet();
+        Wallet walletIntent = (Wallet) getIntent().getSerializableExtra("wallet");
+        if (walletIntent != null) {
+            currentType = Type.EDIT;
+            wallet = walletIntent;
+            diffAmount = wallet.get_initial_amount() - wallet.get_amount();
+            spinnerTypeContainer.setVisibility(View.GONE);
+            walletId = walletIntent.getId();
+        }
+
+        switch (currentType) {
+            case CREATE:
+                tvAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), 0.0));
+                getWalletTypes();
+                break;
+            case EDIT:
+                edtName.setText(wallet.get_name());
+                tvAmount.setText(MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), wallet.get_amount()));
+                sharedViewModel.setAmount(wallet.get_initial_amount());
+
+                // set selection color
+                String hexColor = wallet.get_color();
+                int colorIndex;
+                for (colorIndex = 0; colorIndex < Utils.colors.length; colorIndex++) {
+                    int resId = Utils.colors[colorIndex];
+                    int colorInteger = ContextCompat.getColor(this, resId);
+                    String currentColorHex = String.format("#%06X", (0xFFFFFF & colorInteger));
+                    if (hexColor.trim().equals(currentColorHex.trim()))
+                        break;
+                }
+                spinnerColor.setSelection(colorIndex);
+                // set selection icon
+                spinnerIcon.setSelection(wallet.get_icon());
+                validateInputs();
+                break;
+        }
+
+    }
+
+
+    private void getWalletTypes() {
         // Get wallet types
         Call<ResponseObject<List<WalletType>>> call = apiService.getWalletTypes();
         call.enqueue(new Callback<ResponseObject<List<WalletType>>>() {
@@ -259,7 +319,6 @@ public class CreatingWalletActivity extends BaseActivity {
                         List<WalletType> walletTypes = response.body().getResult();
                         WalletTypeAdapter adapter = new WalletTypeAdapter(CreatingWalletActivity.this, walletTypes);
                         spinnerType.setAdapter(adapter);
-
                     } else {
                         Toast.makeText(CreatingWalletActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -273,7 +332,6 @@ public class CreatingWalletActivity extends BaseActivity {
 
             }
         });
-
     }
 
     private void setControl() {
@@ -283,6 +341,7 @@ public class CreatingWalletActivity extends BaseActivity {
 
         tvAmount = findViewById(R.id.tv_amount);
         tvAmountContainer = findViewById(R.id.tv_amount_container);
+        spinnerTypeContainer = findViewById(R.id.spinner_type_container);
 
         spinnerColor = findViewById(R.id.spinner_color);
         spinnerType = findViewById(R.id.spinner_type);

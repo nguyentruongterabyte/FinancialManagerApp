@@ -141,5 +141,13 @@
     <string name="period">Period</string>
     <string name="september_spending">September spending</string>
     <string name="remain_29_998_974">Remain $29,998,974</string>
+    <string name="spent">Spent</string>
+    <string name="left">Left</string>
+    <string name="_60">60%</string>
+    <string name="food_clothing_education_entertainment_fitness_gift_health">Food, Clothing, Education, Entertainment, Fitness, Gift, Health</string>
+    <string name="_08_01_08_31">08/01 - 08/31</string>
+    <string name="expense_quarter_3">Expense Quarter</string>
+    <string name="_21_days_left">21 days left</string>
+    <string name="statistic">Statistic</string>
 
 </resources>

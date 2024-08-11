@@ -99,7 +99,21 @@ public interface FinancialManagerAPI {
             @Path("id") int userId,
             @Path("transactionId") int transactionId
     );
+
     // Budget
     @POST("api/budget")
     Call<ResponseObject<Budget>> createBudget(@Body BudgetDTO request);
+
+    @PUT("api/budget/{id}/{budgetId}")
+    Call<ResponseObject<Budget>> updateBudget(
+            @Body BudgetDTO request,
+            @Path("id") int userId,
+            @Path("budgetId") int budgetId
+    );
+
+    @DELETE("api/budget/{id}/{budgetId}")
+    Call<ResponseObject<Void>> deleteBudget(
+            @Path("id") int userId,
+            @Path("budgetId") int budgetId
+    );
 }

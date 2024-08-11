@@ -103,9 +103,9 @@ public class StructureActivity extends BaseActivity {
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     private void initData() {
-
+        int walletId = getIntent().getIntExtra("walletId", -1);
         // set adapter tab
-        structureViewPagerAdapter = new StructureViewPagerAdapter(this);
+        structureViewPagerAdapter = new StructureViewPagerAdapter(this, walletId);
         viewPager.setAdapter(structureViewPagerAdapter);
         Calendar calendar = Calendar.getInstance();
 

@@ -11,12 +11,12 @@ public class Wallet implements Serializable {
     protected double _initial_amount;
     protected double _amount;
     protected String _color;
-    protected int _exclude;
     protected int _account_id;
     protected String _wallet_type_code;
     protected int _icon;
+    protected int _exclude;
+    protected int _is_deleted = 0;
     protected List<String> errors;
-    protected WalletType wallet_type;
     protected List<Transaction> transactions;
 
     public Wallet() {
@@ -44,6 +44,14 @@ public class Wallet implements Serializable {
         }
 
         return isUpdated;
+    }
+
+    public void set_is_deleted(int _is_deleted) {
+        this._is_deleted = _is_deleted;
+    }
+
+    public int get_is_deleted() {
+        return _is_deleted;
     }
 
     public List<Transaction> getTransactions() {

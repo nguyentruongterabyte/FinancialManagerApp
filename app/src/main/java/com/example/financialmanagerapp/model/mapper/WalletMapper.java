@@ -14,6 +14,7 @@ public class WalletMapper {
         walletDTO.set_account_id(wallet.get_account_id());
         walletDTO.set_wallet_type_code(wallet.get_wallet_type_code());
         walletDTO.set_icon(wallet.get_icon());
+        walletDTO.set_is_deleted(wallet.get_is_deleted());
         return walletDTO;
     }
 }

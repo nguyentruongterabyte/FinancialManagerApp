@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,34 +11,26 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.example.financialmanagerapp.R;
-import com.example.financialmanagerapp.activity.TransactionDetailActivity;
 import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.Currency;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.model.TransactionDate;
 import com.example.financialmanagerapp.model.User;
 import com.example.financialmanagerapp.model.Wallet;
-import com.example.financialmanagerapp.model.response.ResponseObject;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class Utils {
     // Base URL
-    public static final String BASE_URL = "http://financial-manager.ddnsking.com:6789/";
+    public static final String BASE_URL = "http://192.168.1.10:6789/";
 
     // Currencies
     public static List<Currency> currencies = new ArrayList<>();
@@ -49,6 +40,9 @@ public class Utils {
 
     // Current user
     public static User currentUser = null;
+
+    // period
+    public static final String[] periods = {"Weekly", "Monthly", "Quarterly", "Yearly"};
 
     // Icons array
     public static int[] categoriesIcons = {
@@ -114,6 +108,94 @@ public class Utils {
 
     public static final String CREATING_TRANSACTION = "creating_transaction";
     public static final String UPDATING_TRANSACTION = "updating_transaction";
+
+    public static List<Timestamp> handleCalculateDatePeriod(String period) {
+        int startYear = 0, startMonth = 0, startDay = 0;
+        int endYear = 0, endMonth = 0, endDay = 0;
+        List<Timestamp> dateArray = new ArrayList<>();
+        // handle calculate start and end date
+        Calendar calendar = Calendar.getInstance();
+        if (period.equals(periods[0])) {// Weekly
+
+            // Set to start of the week (Sunday)
+            calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+            startYear = calendar.get(Calendar.YEAR);
+            startMonth = calendar.get(Calendar.MONTH);
+            startDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // Set to end of the week (Saturday)
+            calendar.add(Calendar.DAY_OF_WEEK, 6);
+            endYear = calendar.get(Calendar.YEAR);
+            endMonth = calendar.get(Calendar.MONTH);
+            endDay = calendar.get(Calendar.DAY_OF_MONTH);
+        } else if (period.equals(periods[1])) {// Monthly
+
+            // Set to start of the month
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            startYear = calendar.get(Calendar.YEAR);
+            startMonth = calendar.get(Calendar.MONTH);
+            startDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // set to end of the month
+            endDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+            endYear = startYear;
+            endMonth = startMonth;
+
+        } else if (period.equals(periods[2])) {// Quarterly
+            // Determine the start of the quarter
+            int currentMonth = calendar.get(Calendar.MONTH);
+            int quarterStartMonth = currentMonth / 3 * 3;
+            calendar.set(Calendar.MONTH, quarterStartMonth);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            startYear = calendar.get(Calendar.YEAR);
+            startMonth = calendar.get(Calendar.MONTH);
+            startDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // Set to end of the quarter
+            calendar.add(Calendar.MONTH, 2);
+            endDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+            endYear = calendar.get(Calendar.YEAR);
+            endMonth = calendar.get(Calendar.MONTH);
+        } else if (period.equals(periods[3])) { // Yearly
+            // Set to start of the year
+            calendar.set(Calendar.DAY_OF_YEAR, 1);
+            startYear = calendar.get(Calendar.YEAR);
+            startMonth = calendar.get(Calendar.MONTH);
+            startDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // Set to end of the year
+            calendar.set(Calendar.DAY_OF_YEAR, calendar.getActualMaximum(Calendar.DAY_OF_YEAR));
+            endYear = calendar.get(Calendar.YEAR);
+            endMonth = calendar.get(Calendar.MONTH);
+            endDay = calendar.get(Calendar.DAY_OF_MONTH);
+        }
+
+        // set start date
+        Calendar start = Calendar.getInstance();
+        start.set(Calendar.YEAR, startYear);
+        start.set(Calendar.MONTH, startMonth);
+        start.set(Calendar.DAY_OF_MONTH, startDay);
+        start.set(Calendar.HOUR_OF_DAY, 0);
+        start.set(Calendar.MINUTE, 0);
+        start.set(Calendar.SECOND, 0);
+        start.set(Calendar.MILLISECOND, 0);
+        Timestamp startDate = new Timestamp(start.getTimeInMillis());
+        dateArray.add(startDate);
+
+        // set end date
+        Calendar end = Calendar.getInstance();
+        end.set(Calendar.YEAR, endYear);
+        end.set(Calendar.MONTH, endMonth);
+        end.set(Calendar.DAY_OF_MONTH, endDay);
+        end.set(Calendar.HOUR_OF_DAY, 23);
+        end.set(Calendar.MINUTE, 59);
+        end.set(Calendar.SECOND, 59);
+        end.set(Calendar.MILLISECOND, 999);
+        Timestamp endDate = new Timestamp(end.getTimeInMillis());
+        dateArray.add(endDate);
+
+        return dateArray;
+    }
 
     public static void setListViewHeightBasedOnItems(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();

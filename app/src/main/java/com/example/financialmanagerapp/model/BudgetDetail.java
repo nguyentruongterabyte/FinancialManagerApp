@@ -1,6 +1,8 @@
 package com.example.financialmanagerapp.model;
 
-public class BudgetDetail {
+import java.io.Serializable;
+
+public class BudgetDetail implements Serializable {
     protected int id;
     protected Category category;
     protected int _category_id;

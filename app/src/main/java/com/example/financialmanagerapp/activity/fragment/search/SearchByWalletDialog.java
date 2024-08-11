@@ -68,7 +68,7 @@ public class SearchByWalletDialog extends DialogFragment {
         // observe live data
         sharedViewModel.getWalletIds().observe(getViewLifecycleOwner(), walletIds -> {
             if (adapter == null) {
-                adapter = new WalletAdapter(requireContext(), Utils.currentUser.getWallets(), Utils.walletIcons, true, walletIds);
+                adapter = new WalletAdapter(requireContext(), Utils.currentUser.getWallets(), Utils.walletIcons, true, walletIds, false);
                 listView.setAdapter(adapter);
             } else {
                 adapter.updateWallets(Utils.currentUser.getWallets(), walletIds);
@@ -78,7 +78,7 @@ public class SearchByWalletDialog extends DialogFragment {
 
     private void initData() {
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        adapter = new WalletAdapter(requireContext(), Utils.currentUser.getWallets(), Utils.walletIcons, true, null);
+        adapter = new WalletAdapter(requireContext(), Utils.currentUser.getWallets(), Utils.walletIcons, true, null, false);
         listView.setAdapter(adapter);
     }
 

@@ -111,7 +111,7 @@ public class SelectingWalletFragment extends DialogFragment {
 
     private void initWallets() {
         WalletAdapter adapter = new WalletAdapter(requireContext(), Utils.currentUser.getWallets(),
-                Utils.walletIcons, false, null);
+                Utils.walletIcons, false, null, false);
         listView.setAdapter(adapter);
     }
 

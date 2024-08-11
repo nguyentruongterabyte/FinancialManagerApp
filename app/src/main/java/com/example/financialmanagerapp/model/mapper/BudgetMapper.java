@@ -17,8 +17,6 @@ public class BudgetMapper {
         budgetDTO.set_amount(budget.get_amount());
         budgetDTO.set_color(budget.get_color());
         budgetDTO.set_period(budget.get_period());
-        budgetDTO.set_start_date(budget.get_start_date());
-        budgetDTO.set_end_date(budget.get_end_date());
         budgetDTO.set_account_id(Utils.currentUser.getId());
         List<BudgetDetail> budgetDetails = budget.getBudget_details();
         List<BudgetDetailDTO> budgetDetailDTOs = new ArrayList<>();

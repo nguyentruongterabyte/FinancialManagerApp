@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.WalletManagerActivity">
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="10dp"
+        android:minHeight="@dimen/action_bar_size"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="@dimen/m_10"
+            android:background="@color/white"
+            android:importantForAccessibility="no"
+            android:padding="@dimen/m_10"
+            android:src="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/m_20"
+            android:layout_weight="1"
+            android:fontFamily="@font/akaya_telivigala"
+            android:gravity="center_vertical"
+            android:text="@string/wallet"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_add_wallet"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="@dimen/m_10"
+            android:background="@color/white"
+            android:importantForAccessibility="no"
+            android:padding="@dimen/m_10"
+            android:src="@drawable/ic_plus" />
+    </LinearLayout>
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

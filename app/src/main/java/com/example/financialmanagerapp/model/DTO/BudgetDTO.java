@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.sql.Timestamp;
-
 public class BudgetDTO {
     @SerializedName("_name")
     protected String _name;
@@ -18,10 +16,6 @@ public class BudgetDTO {
 
     @SerializedName("_account_id")
     protected int _account_id;
-    @SerializedName("_start_date")
-    protected Timestamp _start_date;
-    @SerializedName("_end_date")
-    protected Timestamp _end_date;
     @SerializedName("budget_details")
     protected String budgetDetails;
 
@@ -43,14 +37,6 @@ public class BudgetDTO {
         this._account_id = _account_id;
     }
 
-    public void set_start_date(Timestamp _start_date) {
-        this._start_date = _start_date;
-    }
-
-    public void set_end_date(Timestamp _end_date) {
-        this._end_date = _end_date;
-    }
-
     public void setBudgetDetails(String budgetDetails) {
         this.budgetDetails = budgetDetails;
     }
@@ -65,8 +51,6 @@ public class BudgetDTO {
                 ", _color='" + _color + '\'' +
                 ", _period='" + _period + '\'' +
                 ", _account_id=" + _account_id +
-                ", _start_date=" + _start_date +
-                ", _end_date=" + _end_date +
                 ", budgetDetails='" + budgetDetails + '\'' +
                 '}';
     }

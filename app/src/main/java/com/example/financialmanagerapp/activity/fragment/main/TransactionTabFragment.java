@@ -209,7 +209,7 @@ public class TransactionTabFragment extends Fragment {
         List<Wallet> wallets = Utils.currentUser.getWallets();
         for (int i = 0; i < wallets.size(); i++) {
             Wallet wallet = wallets.get(i);
-            if (wallet.get_exclude() == 0 && wallet.get_amount() > 0) {
+            if (wallet.get_exclude() == 0 && wallet.get_amount() > 0 && wallet.get_is_deleted() == 0) {
                 balance += wallet.get_amount();
             }
         }

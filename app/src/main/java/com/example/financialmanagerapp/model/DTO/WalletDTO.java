@@ -13,8 +13,6 @@ public class WalletDTO {
     protected double _amount;
     @SerializedName("_color")
     protected String _color;
-    @SerializedName("_exclude")
-    protected int _exclude;
     @SerializedName("_account_id")
     protected int _account_id;
 
@@ -22,6 +20,14 @@ public class WalletDTO {
     protected String _wallet_type_code;
     @SerializedName("_icon")
     protected int _icon;
+    @SerializedName("_exclude")
+    protected int _exclude;
+    @SerializedName("_is_deleted")
+    protected int _is_deleted;
+
+    public void set_is_deleted(int _is_deleted) {
+        this._is_deleted = _is_deleted;
+    }
 
     public void set_name(String _name) {
         this._name = _name;

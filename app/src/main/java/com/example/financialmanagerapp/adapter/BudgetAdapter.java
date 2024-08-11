@@ -2,7 +2,8 @@ package com.example.financialmanagerapp.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,12 @@ import android.widget.TextView;
 import com.example.financialmanagerapp.R;
 import com.example.financialmanagerapp.model.Budget;
 import com.example.financialmanagerapp.model.BudgetDetail;
-import com.example.financialmanagerapp.model.Category;
 import com.example.financialmanagerapp.model.Transaction;
 import com.example.financialmanagerapp.utils.MoneyFormatter;
 import com.example.financialmanagerapp.utils.TimerFormatter;
 import com.example.financialmanagerapp.utils.Utils;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -81,8 +82,9 @@ public class BudgetAdapter extends BaseAdapter {
         tvName.setText(budget.get_name());
 
         // get start date and end date
-        Calendar start = TimerFormatter.getCalendar(budget.get_start_date());
-        Calendar end = TimerFormatter.getCalendar(budget.get_end_date());
+        List<Timestamp> dateArray = Utils.handleCalculateDatePeriod(budget.get_period());
+        Calendar start = TimerFormatter.getCalendar(dateArray.get(0));
+        Calendar end = TimerFormatter.getCalendar(dateArray.get(1));
 
         // get category ids from budget
         List<Integer> categoryIds = new ArrayList<>();
@@ -105,11 +107,13 @@ public class BudgetAdapter extends BaseAdapter {
             spentAmount += transaction.get_amount();
         }
 
+        // set progress color
+        progressBar.setProgressTintList(
+                ColorStateList.valueOf(Color.parseColor(budget.get_color())));
         if (spentAmount > budget.get_amount()) {
             tvRemainAmount.setText("Overspent " +
                     MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), spentAmount));
             int percentage = 100;
-            Log.d("ProgressBar", "Setting progress to: " + percentage);
             progressBar.setProgress(percentage);
         } else {
             double budgetAmount = budget.get_amount();
@@ -117,14 +121,14 @@ public class BudgetAdapter extends BaseAdapter {
             tvRemainAmount.setText("Remain " +
                     MoneyFormatter.getText(Utils.currentUser.getCurrency().get_symbol(), remainAmount));
 
-            Log.d("ProgressBar", "Budget Amount: " + budgetAmount);
-            Log.d("ProgressBar", "Spent Amount: " + spentAmount);
-
             double percentage = spentAmount / budgetAmount * 100f;
 
-            Log.d("ProgressBar", "Calculated Percentage: " + percentage);
-            progressBar.setProgress((int) percentage);
+            progressBar.setProgress(spentAmount == 0
+                    ? 0
+                    : (int) percentage == 0 ? 1
+                    : (int) percentage);
         }
+
     }
 
 
